@@ -6,7 +6,7 @@ const NotificationPage = () => {
   const [notification, setNotification] = useState([]);
   useEffect(()=>{
     const fetchNotifications = async () => {
-      const res = await fetch(`/api/users/get/notification`);
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/notification`);
       const data = await res.json();
       setNotification(data);
       // console.log(data);
@@ -15,7 +15,7 @@ const NotificationPage = () => {
   },[])
 
   const handleAcceptRequest = async (userId) => {
-    const res = await fetch(`/api/users/accept-request/${userId}`);
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/accept-request/${userId}`);
     // console.log(res);
   }
 

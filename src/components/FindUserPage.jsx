@@ -15,7 +15,7 @@ const FindUserPage = () => {
       const reqData = {
         search: searchInput.trim()
       }
-      const res = await fetch(`/api/users/search-user`,{
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/search-user`,{
       method:'POST',
       headers: {
       "Content-Type": "application/json",
@@ -33,7 +33,7 @@ searchUser();
   },[searchInput])
 
 const handleFollowUser = async (userId) => {
-  const res = await fetch(`/api/users/follow-request/${userId}`)
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/follow-request/${userId}`)
   console.log(res)
 }
   return (

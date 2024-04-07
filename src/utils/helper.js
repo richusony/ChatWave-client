@@ -8,7 +8,7 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
     profile_img,
   };
   // await axios.post("/api/auth/login-signup", {});
-  const res = await fetch("https://chatwave-h135.onrender.com/api/auth/login-signup", {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/auth/login-signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -26,7 +26,7 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
 
 export async function getUsers() {
   // console.log("reached");
-  const res = await axios.get("/api/users/");
+  const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`);
   return res.data;
   // console.log("all users from backend  ", res);
 }

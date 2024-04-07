@@ -25,7 +25,7 @@ const ChatSec = () => {
   const lastMessage = useRef();
   // console.log("online users ",onlineUsers)
   const handleUserChats = async () => {
-    const res = await fetch(`/api/messages/${selectedId}`);
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`);
     const data = await res.json();
     setMessages(data);
   };
@@ -51,7 +51,7 @@ useEffect(()=>{
     const reqData = {
       message: input,
     };
-    const res = await fetch(`/api/messages/send/${selectedId}`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/send/${selectedId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
