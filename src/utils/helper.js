@@ -15,9 +15,12 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
     },
     body: JSON.stringify(reqData),
   });
-  const resData = await res.json();
+  console.log("checking login : ",res)
+  if(res.status == 201 || res.status == 200) {
+    const resData = await res.json();
   sessionStorage.setItem("login-user", JSON.stringify(resData));
   setUser(resData);
+  }
   // console.log("response from backend  ", resData);
 }
 
