@@ -32,7 +32,7 @@ export async function getUsers() {
   // console.log("reached");
   const res = await axios.get(
     `${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`
-  );
+  ,{withCredentials:true});
   return res.data;
   // console.log("all users from backend  ", res);
 }
