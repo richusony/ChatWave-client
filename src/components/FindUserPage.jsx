@@ -20,6 +20,7 @@ const FindUserPage = () => {
       headers: {
       "Content-Type": "application/json",
       },
+      credentials:"include",
       body: JSON.stringify(reqData)
     })
 
@@ -33,7 +34,7 @@ searchUser();
   },[searchInput])
 
 const handleFollowUser = async (userId) => {
-  const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/follow-request/${userId}`)
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/follow-request/${userId}`,{credentials:"include"})
   console.log(res)
 }
   return (

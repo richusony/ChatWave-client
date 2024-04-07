@@ -29,7 +29,7 @@ const UsersList = () => {
   useEffect(() => {
     try {
       async function getUsers() {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`);
+      const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`,{withCredentials:true});
       const data = res.data;
       setUserData(data);
       setFilteredUser(data);

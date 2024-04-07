@@ -25,7 +25,7 @@ const ChatSec = () => {
   const lastMessage = useRef();
   // console.log("online users ",onlineUsers)
   const handleUserChats = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`);
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`,{credentials:"include"});
     const data = await res.json();
     setMessages(data);
   };
@@ -33,7 +33,7 @@ const ChatSec = () => {
    useRealTimeMsg(messages,setMessages)
 
   const getUserDetails = async () => {
-    const reqData = await fetch(`/api/users/${selectedId}`);
+    const reqData = await fetch(`/api/users/${selectedId}`,{credentials:"include"});
     const resData = await reqData.json();
     setUser(resData);
     // console.log("messages : ", resData);
@@ -56,6 +56,7 @@ useEffect(()=>{
       headers: {
         "Content-Type": "application/json",
       },
+      credentials:"include",
       body: JSON.stringify(reqData),
     });
     if(res.status == 201) setInput("");

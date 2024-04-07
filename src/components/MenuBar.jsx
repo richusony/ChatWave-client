@@ -12,7 +12,7 @@ const MenuBar = () => {
     const navigate = useNavigate();
     const handleLogOut = async (e) => {
         try {
-            const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/auth/logout`);
+            const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/auth/logout`,{withCredentials:true});
             await logOut();
 
             sessionStorage.removeItem("login-user");
