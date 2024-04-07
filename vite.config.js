@@ -5,10 +5,10 @@ import react from '@vitejs/plugin-react-swc'
 export default defineConfig({
   plugins: [react()],
   server: {
-    proxy: {
-      "/api": {
-        target: "https://chatwave-h135.onrender.com"
-      }
-    }
+    // proxy: {
+    //   "/api": {
+    //     target: "https://chatwave-h135.onrender.com"
+    //   }
+    // }
   }
 })
