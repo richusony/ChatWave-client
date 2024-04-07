@@ -13,6 +13,7 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(reqData),
   });
   console.log("checking login : ",res)
