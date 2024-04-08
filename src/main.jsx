@@ -40,6 +40,11 @@ const chatRoute = createBrowserRouter([
     path: "/signup",
     element: <LoggedInUserCnxtProvider><LoginSignUp /></LoggedInUserCnxtProvider>,
   },
+  // Add the wildcard route for redirection
+  {
+    path: "*", // Matches any path not explicitly defined above
+    element: <Chats />, // Redirect to the root path
+  },
   // {
   //   path: "/find",
   //   element: <LoggedInUserCnxtProvider><FindUserPage /></LoggedInUserCnxtProvider>,
