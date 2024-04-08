@@ -136,12 +136,8 @@ const UsersList = () => {
             <Link
               onClick={() => setSelectedId(user._id)}
               key={user._id}
-              to={
-                screenWidth < 767
-                  ? `/mobile/chats/${user.username}`
-                  : `/chats/${user.username}`
-              }
-            >
+              to="/chats"
+            > 
               <div className="my-1 border-gray-500 bg-[#FBFBFB] dark:bg-[#7077A1] px-2 py-2 flex justify-between items-center rounded">
                 <div className="flex items-center justify-center">
                   <div className="mr-2 w-14">

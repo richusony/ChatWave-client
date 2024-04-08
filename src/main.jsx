@@ -21,17 +21,17 @@ const chatRoute = createBrowserRouter([
   {
     path: "/chats",
     element: <MenuContextProvider><LoggedInUserCnxtProvider><Chats /></LoggedInUserCnxtProvider></MenuContextProvider>,
-    children: [
-      {
-        path: ":userId", // Use ":userId" for dynamic user IDs
-        element: <MenuContextProvider><LoggedInUserCnxtProvider><Chats /></LoggedInUserCnxtProvider></MenuContextProvider>,
-      },
-    ],
+    // children: [
+    //   {
+    //     path: ":userId", // Use ":userId" for dynamic user IDs
+    //     element: <MenuContextProvider><LoggedInUserCnxtProvider><Chats /></LoggedInUserCnxtProvider></MenuContextProvider>,
+    //   },
+    // ],
   },
-  {
-    path: "/mobile/chats/:userId",
-    element: <LoggedInUserCnxtProvider><ChatSec /></LoggedInUserCnxtProvider>,
-  },
+  // {
+  //   path: "/mobile/chats/:userId",
+  //   element: <LoggedInUserCnxtProvider><ChatSec /></LoggedInUserCnxtProvider>,
+  // },
   {
     path: "/login",
     element: <LoggedInUserCnxtProvider><LoginSignUp /></LoggedInUserCnxtProvider>,
