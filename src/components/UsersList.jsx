@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {
+  faAngleRight,
   faBars,
   faBell,
   faClose,
@@ -19,8 +20,8 @@ import { useMenuContext } from "../context/MenuContext.jsx";
 
 const UsersList = () => {
   const screenWidth = useScreen();
-  const { setSelectedId, setOpenWindow, notificationPage, setNotificationPage} = useContext(SelectedChat);
-  const {setMenuBar} = useMenuContext()
+  const { selectedId, setSelectedId, setOpenWindow, notificationPage, setNotificationPage } = useContext(SelectedChat);
+  const { setMenuBar } = useMenuContext()
   const [userData, setUserData] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [filteredUser, setFilteredUser] = useState([]);
@@ -29,15 +30,16 @@ const UsersList = () => {
   useEffect(() => {
     try {
       async function getUsers() {
-      const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`,{withCredentials:true});
-      const data = res.data;
-      setUserData(data);
-      setFilteredUser(data);
-    }
-    getUsers();
-    // console.log(userData);
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`, { withCredentials: true });
+        const data = res.data;
+        console.log("friends LIst: ", data)
+        setUserData(data);
+        setFilteredUser(data);
+      }
+      getUsers();
+      // console.log(userData);
     } catch (error) {
-      console.log("error while fetching users ",error)
+      console.log("error while fetching users ", error)
     }
   }, []);
 
@@ -85,7 +87,7 @@ const UsersList = () => {
         <div className="mb-2 px-2 py-2">
           <div className="px-2 flex justify-between">
             <h2 className="text-xl">
-              <FontAwesomeIcon onClick={()=> setMenuBar(true)}
+              <FontAwesomeIcon onClick={() => setMenuBar(true)}
                 icon={faBars}
                 className="hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer"
               />
@@ -99,14 +101,14 @@ const UsersList = () => {
                 />
               </h2>
               <h2 className="mr-7 text-xl">
-                <FontAwesomeIcon onClick={()=>{setNotificationPage((prev)=> !prev), setOpenWindow(false)}}
-                  className={`transition delay-75 ease-linear ${notificationPage?'text-[#6c44fa]':'text-gray-600'} hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer`}
+                <FontAwesomeIcon onClick={() => { setNotificationPage((prev) => !prev), setOpenWindow(false) }}
+                  className={`transition delay-75 ease-linear ${notificationPage ? 'text-[#6c44fa]' : 'text-gray-600'} hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer`}
                   icon={faBell}
                 />
-                {notificationPage && <NotificationPage/> }
+                {notificationPage && <NotificationPage />}
               </h2>
               <h2 className="text-xl">
-               <FontAwesomeIcon onClick={()=>{setOpenWindow(true), setNotificationPage(false)}}
+                <FontAwesomeIcon onClick={() => { setOpenWindow(true), setNotificationPage(false) }}
                   className="text-gray-600 hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer"
                   icon={faUserPlus}
                 />
@@ -137,7 +139,8 @@ const UsersList = () => {
               onClick={() => setSelectedId(user._id)}
               key={user._id}
               to="/chats"
-            > 
+              className="group"
+            >
               <div className="my-1 border-gray-500 bg-[#FBFBFB] dark:bg-[#7077A1] px-2 py-2 flex justify-between items-center rounded">
                 <div className="flex items-center justify-center">
                   <div className="mr-2 w-14">
@@ -165,8 +168,8 @@ const UsersList = () => {
                 </div>
 
                 <div>
-                  <span className="text-gray-500 dark:text-gray-800 text-sm">
-                    {/* {user.messages[user.messages.length - 1].time} */}2:30pm
+                  <span className={`${selectedId == user._id ? "text-[#6c44fa]" : "text-gray-500"} dark:text-gray-800 text-xl group-hover:text-[#6c44fa]`}>
+                    <FontAwesomeIcon icon={faAngleRight} />
                   </span>
                 </div>
               </div>
