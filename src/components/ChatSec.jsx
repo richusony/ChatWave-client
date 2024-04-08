@@ -33,7 +33,7 @@ const ChatSec = () => {
    useRealTimeMsg(messages,setMessages)
 
   const getUserDetails = async () => {
-    const reqData = await fetch(`/api/users/${selectedId}`,{credentials:"include"});
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/${selectedId}`,{credentials:"include"});
     const resData = await reqData.json();
     setUser(resData);
     // console.log("messages : ", resData);

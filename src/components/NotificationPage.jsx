@@ -25,7 +25,7 @@ const NotificationPage = () => {
 
       <div className="pb-10 h-full overflow-auto scroll-smooth">
         {notification ? notification?.map((notify) => (
-          <div className='mb-1 px-2 py-2 relative flex items-center bg-[#F1F1F1] rounded-md shadow-sm'>
+          <div key={notify._id} className='mb-1 px-2 py-2 relative flex items-center bg-[#F1F1F1] rounded-md shadow-sm'>
             <div className='h-12 w-12'>
               <img className='h-full w-full object-cover rounded-full' src={notify.senderId.profileImage} alt="user" />
             </div>

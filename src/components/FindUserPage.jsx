@@ -46,7 +46,7 @@ const handleFollowUser = async (userId) => {
 
       <div className='pb-12 h-full overflow-auto scroll-smooth'>
         {usersData? usersData.map((person)=>(
-      <div className='mb-1 px-2 py-2 relative flex items-center bg-[#F1F1F1] rounded-md shadow-sm'>
+      <div key={person._id} className='mb-1 px-2 py-2 relative flex items-center bg-[#F1F1F1] rounded-md shadow-sm'>
           <div className='h-12 w-12'>
               <img className='h-full w-full object-cover rounded-full' src={person.profileImage} alt="person" />
           </div>
