@@ -156,12 +156,6 @@ const UsersList = () => {
                       {user.fullname}
                     </h3>
                     <span className="text-gray-800 text-sm">
-                      {/* {user.messages[user.messages.length - 1].message.length >
-                      30
-                        ? user.messages[
-                            user.messages.length - 1
-                          ].message.substring(0, 25) + "..."
-                        : user.messages[user.messages.length - 1].message} */}
                       @{user.username}
                     </span>
                   </div>
