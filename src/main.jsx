@@ -27,7 +27,7 @@ const chatRoute = createBrowserRouter([
   // Add the wildcard route for redirection
   {
     path: "*", // Matches any path not explicitly defined above
-    element: <Chats />, // Redirect to the root path
+    element: <Chats />, 
   }
 ]);
 

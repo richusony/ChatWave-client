@@ -6,7 +6,6 @@ import {
   faAngleRight,
   faBars,
   faBell,
-  faClose,
   faMoon,
   faSearch,
   faSun,
