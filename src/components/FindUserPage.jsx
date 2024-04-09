@@ -7,6 +7,7 @@ import { useLoggedInUser } from '../context/LoggedInUserCnxtProvider';
 const FindUserPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const {user} = useLoggedInUser();
+  const [friendsList, setFriendsList] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const {setOpenWindow, setSelectedId} = useContext(SelectedChat)
   useEffect(()=>{
@@ -31,11 +32,22 @@ const FindUserPage = () => {
     }
     }
 searchUser();
+getUserFriendList();
   },[searchInput])
+
+  const getUserFriendList = async () => {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/friends-list`,{credentials:"include"})
+    const resData = await res.json();
+    setFriendsList(resData);
+    console.log("friends list :: ", resData);
+  }
 
 const handleFollowUser = async (userId) => {
   const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/follow-request/${userId}`,{credentials:"include"})
-  console.log(res)
+  console.log(res);
+  if(res.status == 201) {
+    getUserFriendList();
+  }
 }
   return (
     <div className='px-3 py-3 translate-y-[50%] translate-x-[50%] absolute h-80 w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
@@ -56,10 +68,10 @@ const handleFollowUser = async (userId) => {
             <p className='text-gray-500 text-sm'>@{person.username}</p>
           </div>
 
-          {user && (
+          {friendsList && (
         <div className='absolute right-3'>
-          {user.friends?.some((usr) => usr.friendId === person._id) ? (
-            user.friends.find((usr) => usr.friendId === person._id && usr.status) ? (
+          {friendsList?.some((usr) => usr.friendId === person._id) ? (
+            friendsList.find((usr) => usr.friendId === person._id && usr.status) ? (
               <button className='px-4 py-1 bg-violet-500 rounded-md text-white shadow-xl' onClick={() => setSelectedId(person._id)}>message</button>
             ) : (
               <button className='px-4 py-1 bg-violet-500 rounded-md text-white shadow-xl'>pending</button>

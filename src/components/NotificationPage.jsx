@@ -3,19 +3,25 @@ import React, { useEffect, useState } from 'react'
 const NotificationPage = () => {
   const [notification, setNotification] = useState([]);
   useEffect(() => {
-    const fetchNotifications = async () => {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/notification`, { credentials: 'include' });
-      const data = await res.json();
-      setNotification(data);
-      // console.log(data);
-    }
     fetchNotifications();
   }, [])
 
   const handleAcceptRequest = async (userId) => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/accept-request/${userId}`, { credentials: "include" });
     // console.log(res);
+    if(res.status == 200) {
+      fetchNotifications();
+    } else {
+      alert("problem while accepting request");
+    }
   }
+
+const fetchNotifications = async () => {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/notification`, { credentials: 'include' });
+      const data = await res.json();
+      setNotification(data);
+      // console.log(data);
+    }
 
   return (
     <div className="transition delay-150 ease-linear px-3 py-2 absolute h-72 w-[500px] bg-[#E1DFEA] z-50 translate-y-[50%] translate-x-[50%] left-[10%] rounded-xl shadow-xl overflow-hidden">
