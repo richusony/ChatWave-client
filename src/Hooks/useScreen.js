@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 const useScreen = () => {
   const [screenWidth, setScreenWidth] = useState(window.screen.availWidth);

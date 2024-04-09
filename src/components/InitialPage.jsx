@@ -1,6 +1,4 @@
-import React, { useEffect, useState } from "react";
 import wave from "../assets/others/ailogo-removebg-preview.png";
-import useTheme from "../context/theme";
 
 const InitialPage = () => {
 

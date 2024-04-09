@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import LoggedInUserContext from "./LoggedInUserContexs.js";
 
 export const useLoggedInUser = () => {

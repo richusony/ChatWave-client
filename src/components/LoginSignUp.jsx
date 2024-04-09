@@ -1,12 +1,9 @@
-import React, { useContext, useState } from "react";
 import loginBg from "../assets/others/login-bg.jpg";
 import wave from "../assets/others/wave.png";
-import UserContext from "../context/LoggedInUserContexs";
 import { signInWithPopup } from "firebase/auth";
 import { auth, googleProvider } from "../services/firebase";
 import { loginSignUp } from "../utils/helper";
 import { Navigate } from "react-router-dom";
-import LoggedInUserContext from "../context/LoggedInUserContexs";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider";
 
 const LoginSignUp = () => {

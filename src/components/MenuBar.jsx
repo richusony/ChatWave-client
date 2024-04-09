@@ -1,4 +1,4 @@
-import { faArrowLeft, faClose, faGear, faPowerOff } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft, faGear, faPowerOff } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { useMenuContext } from '../context/MenuContext'

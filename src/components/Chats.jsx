@@ -1,12 +1,11 @@
-import React, { useContext, useState } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 import UsersList from "./UsersList";
 import FindUserPage from "./FindUserPage.jsx"
 import ChatSec from "./ChatSec";
 import InitialPage from "./InitialPage";
 import SelectedChat from "../context/SelectedChat.jsx";
-import LoggedInUserContext from "../context/LoggedInUserContexs.js";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider.jsx";
 import { SocketContextProvider } from "../context/SocketContext.jsx";
 import { useMenuContext } from "../context/MenuContext.jsx";

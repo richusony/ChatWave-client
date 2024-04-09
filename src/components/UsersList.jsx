@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -11,14 +11,12 @@ import {
   faSun,
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import useScreen from "../Hooks/useScreen";
 import { ThemeProvdier } from "../context/theme";
 import SelectedChat from "../context/SelectedChat.jsx";
 import NotificationPage from "./NotificationPage.jsx";
 import { useMenuContext } from "../context/MenuContext.jsx";
 
 const UsersList = () => {
-  const screenWidth = useScreen();
   const { selectedId, setSelectedId, setOpenWindow, notificationPage, setNotificationPage } = useContext(SelectedChat);
   const { setMenuBar } = useMenuContext()
   const [userData, setUserData] = useState([]);
