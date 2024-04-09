@@ -13,39 +13,42 @@ import SelectedChat from "../context/SelectedChat.jsx";
 import { extractTime } from "../utils/helper.js";
 import { useSocketContext } from "../context/SocketContext.jsx";
 import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
+import "../chat.css";
 
 const ChatSec = () => {
   const { selectedId } = useContext(SelectedChat);
   const isOnline = useOnline();
-  const {onlineUsers} = useSocketContext()
+  const { socket, onlineUsers } = useSocketContext();
+  const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [user, setUser] = useState({});
   const [sendLoading, setSendLoading] = useState(false);
   const lastMessage = useRef();
-  // console.log("online users ",onlineUsers)
+
   const handleUserChats = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`,{credentials:"include"});
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`, { credentials: "include" });
     const data = await res.json();
     setMessages(data);
   };
 
-   useRealTimeMsg(messages,setMessages)
+  useRealTimeMsg(messages, setMessages);
 
   const getUserDetails = async () => {
-    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/${selectedId}`,{credentials:"include"});
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/${selectedId}`, { credentials: "include" });
     const resData = await reqData.json();
     setUser(resData);
-    // console.log("messages : ", resData);
   };
+
   useEffect(() => {
     getUserDetails();
     handleUserChats();
-  }, [selectedId,sendLoading]);
+  }, [selectedId, sendLoading]);
 
-useEffect(()=>{
-    lastMessage.current?.scrollIntoView({behaviour: "smooth"});
-},[messages])
+  useEffect(() => {
+    lastMessage.current?.scrollIntoView({ behaviour: "smooth" });
+  }, [messages]);
+
   const handleSendMessage = async () => {
     setSendLoading(true);
     const reqData = {
@@ -56,21 +59,58 @@ useEffect(()=>{
       headers: {
         "Content-Type": "application/json",
       },
-      credentials:"include",
+      credentials: "include",
       body: JSON.stringify(reqData),
     });
-    if(res.status == 201) setInput("");
+    if (res.status == 201) setInput("");
     const resData = await res.json();
     setSendLoading(false);
-    // console.log("send :", resData);
   };
 
   const handleKeyDown = (e) => {
+    console.log("keyisDown")
+    if (e.target.value.trim() !== "") {
+      socket.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
+    }
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent default form submission
+      socket.emit("userStoppedTyping", { receiverId: selectedId });
+      e.preventDefault();
       handleSendMessage();
     }
   };
+
+  const handleInputData = (e) => {
+    setInput(e.target.value);
+  };
+
+  // const handleKeyDownForInput = (e) => {
+  //   console.log("keyisDown")
+  //   socket.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
+  // };
+
+  // const handleKeyUpForInput = (e) => {
+  //   console.log("keyisUp")
+  //   socket.emit("userStoppedTyping", { receiverId: selectedId });
+  // };
+
+  // Listen for userIsTyping and userStoppedTyping events from the server
+  useEffect(() => {
+    socket.on("userIsTyping", () => {
+      setUserIsTyping(true);
+    });
+
+    socket.on("userStoppedTyping", () => {
+      console.log("isStopped")
+      setUserIsTyping(false);
+    });
+
+    return () => {
+      socket.off("userIsTyping");
+      socket.off("userStoppedTyping");
+    };
+  }, [socket]);
+
+
 
   return (
     <>
@@ -88,7 +128,7 @@ useEffect(()=>{
               </div>
               <div className="ml-2">
                 <span className="font-semibold dark:text-gray-300">
-                 <p> {user.fullname}</p> <p className="text-xs text-gray-400">{onlineUsers.includes(user._id)?"Online": "Offline"}</p>
+                  <p> {user.fullname}</p> <p className="text-xs text-gray-400">{onlineUsers.includes(user._id) ? "Online" : "Offline"}</p>
                 </span>
               </div>
             </div>
@@ -138,27 +178,32 @@ useEffect(()=>{
               </div>
             )
           )}
+          <div className={`transition delay-100 ease-linear w-11 h-9 rounded-2xl ${userIsTyping ? "" : "opacity-0"} bg-[#7351F2] text-white flex justify-center items-center`}>
+            {userIsTyping && <span className="text-xl font-bold flex justify-center items-center dot-container">
+              <span key="dot1" className="dot dot1"></span>
+              <span key="dot2" className="dot dot2"></span>
+              <span key="dot3" className="dot dot3"></span>
+            </span>}
+          </div>
         </div>
 
         {isOnline ? (
           <div className="px-2 py-2 w-full flex items-center justify-between cursor-text">
-            
             <input
               className="outline-none bg-white dark:bg-[#2D3250] dark:text-gray-300 w-screen py-3 px-3 rounded-full"
               type="text"
               value={input}
               placeholder="type something..."
-              onChange={(e) => setInput(e.target.value)}
+              onChange={handleInputData}
               onKeyDown={handleKeyDown}
+              // onKeyUp={handleKeyUpForInput}
             />
             <span
               onClick={handleSendMessage}
               className="ml-2 py-3 px-4 text-white dark:text-gray-800 bg-[#7351F2] cursor-pointer rounded-full"
             >
-      {sendLoading ? <FontAwesomeIcon icon={faSpinner} />:
-              <FontAwesomeIcon icon={faPaperPlane} />}
+              {sendLoading ? <FontAwesomeIcon icon={faSpinner} /> : <FontAwesomeIcon icon={faPaperPlane} />}
             </span>
-
           </div>
         ) : (
           <div className="px-2 sticky py-2 w-full flex items-center justify-center cursor-text text-center">

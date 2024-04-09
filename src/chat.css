@@ -1,0 +1,59 @@
+.dot-container {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: rgb(255, 255, 255);
+  margin-right: 5px;
+  transition: all 1s ease-in-out;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both; /* Ensures the dots stay at the end position after animation */
+}
+
+.dot1 {
+  animation-name: dot1UpDown;
+}
+
+.dot2 {
+  animation-name: dot2UpDown;
+}
+
+.dot3 {
+  animation-name: dot3UpDown;
+}
+
+@keyframes dot1UpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes dot2UpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes dot3UpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  12.5% {
+    transform: translateY(-10px);
+  }
+}
