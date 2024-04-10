@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -24,7 +24,7 @@ const UsersList = () => {
   const [searchUser, setSearchUser] = useState("");
   const [filteredUser, setFilteredUser] = useState([]);
   const [themeMode, setThemeMode] = useState(localStorage.getItem("theme"));
-  const screenWidth =  useScreen();
+  const screenWidth = useScreen();
 
   useEffect(() => {
     try {
@@ -32,14 +32,16 @@ const UsersList = () => {
         const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/`, { withCredentials: true });
         const data = res.data;
         console.log("friends LIst: ", data)
-        setUserData(data);
-        setFilteredUser(data);
+        // setUserData(data);
+        // setFilteredUser(data);
       }
-      getUsers();
+      // getUsers();
       // console.log(userData);
     } catch (error) {
       console.log("error while fetching users ", error)
     }
+
+    getAllMessages();
   }, []);
 
   useEffect(() => {
@@ -51,17 +53,17 @@ const UsersList = () => {
     document.querySelector("html").classList.add(themeMode);
   }, [themeMode]);
 
-  const handleSearchUsers = () => {
+  const handleSearchUsers = useCallback(() => {
     const searchTerm = searchUser.trim().toLowerCase(); // Trim and convert search input to lowercase
     if (searchTerm !== "") {
       const newData = userData.filter((user) =>
-        user.fullname.toLowerCase().includes(searchTerm)
+        user.senderInfo.fullname.toLowerCase().includes(searchTerm)
       );
       setFilteredUser(newData);
     } else {
       setFilteredUser(userData); // Reset to original data when search input is empty
     }
-  };
+  },[searchUser]);
 
   const darkTheme = () => {
     setThemeMode("dark");
@@ -79,6 +81,13 @@ const UsersList = () => {
       darkTheme();
     }
   };
+
+  const getAllMessages = async () => {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/get/messages`, { withCredentials: true });
+    console.log(res);
+    setUserData(res.data);
+    setFilteredUser(res.data);
+  }
 
   return (
     <ThemeProvdier value={{ themeMode, darkTheme, lightTheme }}>
@@ -104,7 +113,7 @@ const UsersList = () => {
                   className={`transition delay-75 ease-linear ${notificationPage ? 'text-[#6c44fa]' : 'text-gray-600'} hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer`}
                   icon={faBell}
                 />
-                
+
               </h2>
               <h2 className="text-xl">
                 <FontAwesomeIcon onClick={() => { setOpenWindow(true), setNotificationPage(false) }}
@@ -135,8 +144,8 @@ const UsersList = () => {
         <div className="h-5/6 overflow-auto">
           {filteredUser.map((user) => (
             <Link
-              onClick={() => setSelectedId(user._id)}
-              key={user._id}
+              onClick={() => setSelectedId(user.senderId)}
+              key={user.senderId}
               to="/chats"
               className="group"
             >
@@ -145,23 +154,23 @@ const UsersList = () => {
                   <div className="mr-2 w-14">
                     <img
                       className="w-full h-full rounded-full object-cover"
-                      src={user.profileImage}
+                      src={user.senderInfo.profileImage}
                       alt="user"
                     />
                   </div>
 
                   <div>
                     <h3 className="font-semibold  dark:text-gray-900">
-                      {user.fullname.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}
+                      {user.senderInfo.fullname.length > 15 && screenWidth < 768 ? user.senderInfo.fullname.substring(0, 15) + "..." : user.senderInfo.fullname}
                     </h3>
                     <span className="text-gray-800 text-sm">
-                      @{user.username}
+                      {user.message}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <span className={`${selectedId == user._id ? "text-[#6c44fa]" : "text-gray-500"} dark:text-gray-800 text-xl group-hover:text-[#6c44fa]`}>
+                  <span className={`${selectedId == user.senderId? "text-[#6c44fa]" : "text-gray-500"} dark:text-gray-800 text-xl group-hover:text-[#6c44fa]`}>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </span>
                 </div>

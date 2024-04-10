@@ -9,7 +9,8 @@ const useRealTimeMsg = (messages, setMessages) => {
     socket?.on("newMessage", (newMessage) => {
       const sound = new Audio(notificationSound);
       sound.play();
-      setMessages([...messages, newMessage]);
+      // messages[messages.length - 1].messages.push(newMessage);
+      setMessages([newMessage]);
     });
 
     return () => socket?.off("newMessage");

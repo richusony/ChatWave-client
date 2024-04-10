@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useOnline from "../Hooks/useOnline.js";
 import { useSelectedChat } from "../context/SelectedChat.jsx";
-import { extractTime } from "../utils/helper.js";
+import { extractTime, getTodayDate, getYesterdayDate } from "../utils/helper.js";
 import { useSocketContext } from "../context/SocketContext.jsx";
 import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
 import "../chat.css";
@@ -20,10 +20,11 @@ const ChatSec = () => {
   const { selectedId } = useSelectedChat();
   console.log("ChatSec selected Id : ", selectedId);
   const isOnline = useOnline();
- const screenWidth =  useScreen();
+  const screenWidth = useScreen();
   const { socket, onlineUsers } = useSocketContext();
   const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
   const [messages, setMessages] = useState([]);
+  const [realTimeMessages, setRealTimeMessages] = useState([]);
   const [input, setInput] = useState("");
   const [user, setUser] = useState({});
   const [sendLoading, setSendLoading] = useState(false);
@@ -32,10 +33,46 @@ const ChatSec = () => {
   const handleUserChats = async () => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`, { credentials: "include" });
     const data = await res.json();
-    setMessages(data);
+    // console.log("const messages = ",data);
+    const groupedMessages = groupMessagesByDate(data);
+    console.log("grouped :: ", groupedMessages);
+    setMessages(groupedMessages);
+    setRealTimeMessages(null);
   };
 
-  useRealTimeMsg(messages, setMessages);
+  const todayDate = getTodayDate();
+  console.log("todayDate ::: ", todayDate)
+  const yesterdayDate = getYesterdayDate();
+
+
+  // Function to group messages by date
+  function groupMessagesByDate(messages) {
+    const groupedMessages = [];
+
+    messages.forEach(message => {
+      const date = new Date(message.createdAt);
+      const dateString = date.toDateString();
+
+      // Check if the date already exists in groupedMessages
+      const existingDateIndex = groupedMessages.findIndex(item => item.dateString === dateString);
+
+      // If the date exists, push the message to its messages array
+      if (existingDateIndex !== -1) {
+        groupedMessages[existingDateIndex].messages.push(message);
+      } else {
+        // If the date doesn't exist, create a new entry
+        groupedMessages.push({
+          dateString: dateString,
+          dateObject: date,
+          messages: [message],
+        });
+      }
+    });
+
+    return groupedMessages;
+  }
+
+  useRealTimeMsg(realTimeMessages, setRealTimeMessages);
 
   const getUserDetails = async () => {
     const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/${selectedId}`, { credentials: "include" });
@@ -134,7 +171,7 @@ const ChatSec = () => {
               </div>
               <div className="ml-2">
                 <span className="font-semibold dark:text-gray-300">
-                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}</p> {onlineUsers.includes(user._id) ?<p className="text-xs text-gray-400">Online</p> :""}
+                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0, 15) + "..." : user.fullname}</p> {onlineUsers.includes(user._id) ? <p className="text-xs text-gray-400">Online</p> : ""}
                 </span>
               </div>
             </div>
@@ -155,35 +192,60 @@ const ChatSec = () => {
 
         {/* Chats  */}
         <div className="px-3 h-[81vh] overflow-auto scroll-smooth">
-          <div className="my-4 text-center">
-            <span className="px-2 py-2 bg-white rounded-xl shadow-xl text-gray-700">
-              January 10 2023
-            </span>
-          </div>
+          {messages.length > 0 && messages.map((msg) => (
+            <>
 
-          {messages.length > 0 && messages.map((msg) =>
-            msg.receiverId == selectedId ? (
-              <div key={msg._id} ref={lastMessage} className="my-2 w-full flex justify-end">
-                <div className="py-1 px-2 max-w-40 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
-                  <p className="text-gray-700">{msg.message}</p>
-                  <div className="text-end text-xs">
-                    <p className="text-slate-500">{extractTime(msg.createdAt)}</p>
+              <div className="my-10 text-center">
+                <span className="px-3 py-2 bg-white rounded-md shadow-xl text-gray-700">
+                  {msg.dateString == todayDate.replaceAll(",", "") ? "Today" : msg.dateString == yesterdayDate.replaceAll(",", "") ? "Yesterday" : msg.dateString}
+                </span>
+              </div>
+              {msg.messages.length > 0 && msg.messages.map((msgs) =>
+                msgs.receiverId == selectedId ? (
+                  <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
+                    <div className="py-1 px-2 max-w-40 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+                      <p className="text-gray-700">{msgs.message}</p>
+                      <div className="text-end text-xs">
+                        <p className="text-slate-500">{extractTime(msgs.createdAt)}</p>
+                      </div>
+                    </div>
                   </div>
+                ) : (
+                  <div ref={lastMessage} key={msgs._id} className="my-2 w-full flex justify-start">
+                    <div className="py-1 px-2 max-w-40 md:w-fit bg-[#7351F2] rounded-xl shadow-md">
+                      <p className="text-white dark:text-gray-800">{msgs.message}</p>
+                      <div className="text-end text-xs">
+                        <p className="text-gray-200 dark:text-gray-700">
+                          {extractTime(msgs.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              )}
+            </>
+          ))}
+          {realTimeMessages && realTimeMessages.map((msgs) => msgs.receiverId == selectedId ? (
+            <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
+              <div className="py-1 px-2 max-w-40 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+                <p className="text-gray-700">{msgs.message}</p>
+                <div className="text-end text-xs">
+                  <p className="text-slate-500">{extractTime(msgs.createdAt)}</p>
                 </div>
               </div>
-            ) : (
-              <div ref={lastMessage} key={msg._id} className="my-2 w-full flex justify-start">
-                <div className="py-1 px-2 max-w-40 md:w-fit bg-[#7351F2] rounded-xl shadow-md">
-                  <p className="text-white dark:text-gray-800">{msg.message}</p>
-                  <div className="text-end text-xs">
-                    <p className="text-gray-200 dark:text-gray-700">
-                      {extractTime(msg.createdAt)}
-                    </p>
-                  </div>
+            </div>
+          ) : (
+            <div ref={lastMessage} key={msgs._id} className="my-2 w-full flex justify-start">
+              <div className="py-1 px-2 max-w-40 md:w-fit bg-[#7351F2] rounded-xl shadow-md">
+                <p className="text-white dark:text-gray-800">{msgs.message}</p>
+                <div className="text-end text-xs">
+                  <p className="text-gray-200 dark:text-gray-700">
+                    {extractTime(msgs.createdAt)}
+                  </p>
                 </div>
               </div>
-            )
-          )}
+            </div>
+          ))}
           <div className={`transition delay-100 ease-linear w-11 h-9 rounded-2xl ${userIsTyping ? "" : "opacity-0"} bg-[#7351F2] text-white flex justify-center items-center`}>
             {userIsTyping && <span className="text-xl font-bold flex justify-center items-center dot-container">
               <span key="dot1" className="dot dot1"></span>
@@ -202,7 +264,7 @@ const ChatSec = () => {
               placeholder="type something..."
               onChange={handleInputData}
               onKeyDown={handleKeyDown}
-              // onKeyUp={handleKeyUpForInput}
+            // onKeyUp={handleKeyUpForInput}
             />
             <span
               onClick={handleSendMessage}
