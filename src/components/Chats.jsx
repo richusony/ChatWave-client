@@ -44,7 +44,7 @@ const Chats = () => {
                 {openWindow && <FindUserPage />}
                 {menuBar ? <MenuBar /> : <UsersList />}
                 <div className="hidden md:block w-full md:w-2/3 h-full bg-[#E8E8F9]">
-                  {selectedId ? <ChatSec /> : <InitialPage />}
+                  {selectedId ? <SelectedChat.Provider value={{ openWindow, setOpenWindow, notificationPage, setNotificationPage, selectedId, setSelectedId }}><ChatSec /> </SelectedChat.Provider>: <InitialPage />}
                 </div>
               </div>
             </SelectedChat.Provider>

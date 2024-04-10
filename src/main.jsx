@@ -2,11 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Chats from "./components/Chats.jsx";
+import ChatSec from "./components/ChatSec.jsx";
 import LoginSignUp from "./components/LoginSignUp.jsx";
 import { MenuContextProvider } from "./context/MenuContext.jsx";
 import LoggedInUserCnxtProvider from "./context/LoggedInUserCnxtProvider.jsx";
 import "./index.css";
-import ChatSec from "./components/ChatSec.jsx";
+import { SocketContextProvider } from "./context/SocketContext.jsx";
 
 const chatRoute = createBrowserRouter([
   {
@@ -27,7 +28,7 @@ const chatRoute = createBrowserRouter([
   },
   {
     path: "/mobile/chats",
-    element: <ChatSec />
+    element: <LoggedInUserCnxtProvider><SocketContextProvider><ChatSec /></SocketContextProvider></LoggedInUserCnxtProvider>
   },
   // Add the wildcard route for redirection
   {
