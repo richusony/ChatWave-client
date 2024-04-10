@@ -9,14 +9,15 @@ import {
   faWifi,
 } from "@fortawesome/free-solid-svg-icons";
 import useOnline from "../Hooks/useOnline.js";
-import SelectedChat from "../context/SelectedChat.jsx";
+import { useSelectedChat } from "../context/SelectedChat.jsx";
 import { extractTime } from "../utils/helper.js";
 import { useSocketContext } from "../context/SocketContext.jsx";
 import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
 import "../chat.css";
 
 const ChatSec = () => {
-  const { selectedId } = useContext(SelectedChat);
+  const { selectedId } = useSelectedChat();
+  console.log("ChatSec selected Id : ", selectedId);
   const isOnline = useOnline();
   const { socket, onlineUsers } = useSocketContext();
   const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
@@ -70,10 +71,10 @@ const ChatSec = () => {
   const handleKeyDown = (e) => {
     console.log("keyisDown")
     if (e.target.value.trim() !== "") {
-      socket.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
+      socket?.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
     }
     if (e.key === "Enter") {
-      socket.emit("userStoppedTyping", { receiverId: selectedId });
+      socket?.emit("userStoppedTyping", { receiverId: selectedId });
       e.preventDefault();
       handleSendMessage();
     }
@@ -81,7 +82,7 @@ const ChatSec = () => {
 
   const handleInputData = (e) => {
     if (e.target.value.trim() == "") {
-      socket.emit("userStoppedTyping", { receiverId: selectedId });
+      socket?.emit("userStoppedTyping", { receiverId: selectedId });
     }
     setInput(e.target.value);
   };
@@ -98,18 +99,18 @@ const ChatSec = () => {
 
   // Listen for userIsTyping and userStoppedTyping events from the server
   useEffect(() => {
-    socket.on("userIsTyping", () => {
+    socket?.on("userIsTyping", () => {
       setUserIsTyping(true);
     });
 
-    socket.on("userStoppedTyping", () => {
+    socket?.on("userStoppedTyping", () => {
       console.log("isStopped")
       setUserIsTyping(false);
     });
 
     return () => {
-      socket.off("userIsTyping");
-      socket.off("userStoppedTyping");
+      socket?.off("userIsTyping");
+      socket?.off("userStoppedTyping");
     };
   }, [socket]);
 
@@ -158,7 +159,7 @@ const ChatSec = () => {
             </span>
           </div>
 
-          {messages.map((msg) =>
+          {messages.length > 0 && messages.map((msg) =>
             msg.receiverId == selectedId ? (
               <div key={msg._id} ref={lastMessage} className="my-2 w-full flex justify-end">
                 <div className="py-1 px-2 max-w-40 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">

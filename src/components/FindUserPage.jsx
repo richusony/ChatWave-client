@@ -1,7 +1,7 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react'
-import SelectedChat from '../context/SelectedChat';
+import { useSelectedChat } from '../context/SelectedChat';
 import { useLoggedInUser } from '../context/LoggedInUserCnxtProvider';
 
 const FindUserPage = () => {
@@ -9,7 +9,7 @@ const FindUserPage = () => {
   const {user} = useLoggedInUser();
   const [friendsList, setFriendsList] = useState([]);
   const [usersData, setUsersData] = useState([]);
-  const {setOpenWindow, setSelectedId} = useContext(SelectedChat)
+  const {setOpenWindow, setSelectedId} = useSelectedChat()
   useEffect(()=>{
     const searchUser =  async () => {
       if(searchInput == "") return setUsersData([]);

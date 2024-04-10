@@ -12,13 +12,13 @@ import {
   faUserPlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { ThemeProvdier } from "../context/theme";
-import SelectedChat from "../context/SelectedChat.jsx";
+import { useSelectedChat } from "../context/SelectedChat.jsx";
 import NotificationPage from "./NotificationPage.jsx";
 import { useMenuContext } from "../context/MenuContext.jsx";
 import useScreen from "../Hooks/useScreen.js"
 
 const UsersList = () => {
-  const { selectedId, setSelectedId, setOpenWindow, notificationPage, setNotificationPage } = useContext(SelectedChat);
+  const { selectedId, setSelectedId, setOpenWindow, notificationPage, setNotificationPage } = useSelectedChat();
   const { setMenuBar } = useMenuContext()
   const [userData, setUserData] = useState([]);
   const [searchUser, setSearchUser] = useState("");
@@ -133,11 +133,11 @@ const UsersList = () => {
         </div>
 
         <div className="h-5/6 overflow-auto">
-          {filteredUser.map((user, index, array) => (
+          {filteredUser.map((user) => (
             <Link
               onClick={() => setSelectedId(user._id)}
               key={user._id}
-              to={`${screenWidth < 768 ? "/mobile/chats" : "/chats"}`}
+              to="/chats"
               className="group"
             >
               <div className="my-1 border-gray-500 bg-[#FBFBFB] dark:bg-[#7077A1] px-2 py-2 flex justify-between items-center rounded">

@@ -7,7 +7,10 @@ import LoginSignUp from "./components/LoginSignUp.jsx";
 import { MenuContextProvider } from "./context/MenuContext.jsx";
 import LoggedInUserCnxtProvider from "./context/LoggedInUserCnxtProvider.jsx";
 import "./index.css";
+import { SelectedChatProvider } from "./context/SelectedChat.jsx";
 import { SocketContextProvider } from "./context/SocketContext.jsx";
+import { AuthContextProvider } from "./context/AuthContext.jsx";
+import UsersList from "./components/UsersList.jsx";
 
 const chatRoute = createBrowserRouter([
   {
@@ -16,7 +19,7 @@ const chatRoute = createBrowserRouter([
   },
   {
     path: "/chats",
-    element: <MenuContextProvider><LoggedInUserCnxtProvider><Chats /></LoggedInUserCnxtProvider></MenuContextProvider>
+    element: <MenuContextProvider><LoggedInUserCnxtProvider><SelectedChatProvider><Chats /></SelectedChatProvider></LoggedInUserCnxtProvider></MenuContextProvider>
   },
   {
     path: "/login",
@@ -26,14 +29,14 @@ const chatRoute = createBrowserRouter([
     path: "/signup",
     element: <LoggedInUserCnxtProvider><LoginSignUp /></LoggedInUserCnxtProvider>,
   },
-  {
-    path: "/mobile/chats",
-    element: <LoggedInUserCnxtProvider><SocketContextProvider><ChatSec /></SocketContextProvider></LoggedInUserCnxtProvider>
-  },
+  // {
+  //   path: "/mobile/chats",
+  //   element: <AuthContextProvider><LoggedInUserCnxtProvider><SelectedChatProvider><SocketContextProvider><ChatSec /></SocketContextProvider></SelectedChatProvider></LoggedInUserCnxtProvider></AuthContextProvider>
+  // },
   // Add the wildcard route for redirection
   {
     path: "*", // Matches any path not explicitly defined above
-    element: <Chats />, 
+    element: <Chats />,
   }
 ]);
 
