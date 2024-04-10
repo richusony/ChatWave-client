@@ -15,6 +15,7 @@ import { ThemeProvdier } from "../context/theme";
 import SelectedChat from "../context/SelectedChat.jsx";
 import NotificationPage from "./NotificationPage.jsx";
 import { useMenuContext } from "../context/MenuContext.jsx";
+import useScreen from "../Hooks/useScreen.js"
 
 const UsersList = () => {
   const { selectedId, setSelectedId, setOpenWindow, notificationPage, setNotificationPage } = useContext(SelectedChat);
@@ -23,6 +24,7 @@ const UsersList = () => {
   const [searchUser, setSearchUser] = useState("");
   const [filteredUser, setFilteredUser] = useState([]);
   const [themeMode, setThemeMode] = useState(localStorage.getItem("theme"));
+  const screenWidth =  useScreen();
 
   useEffect(() => {
     try {
@@ -135,7 +137,7 @@ const UsersList = () => {
             <Link
               onClick={() => setSelectedId(user._id)}
               key={user._id}
-              to="/chats"
+              to={`${screenWidth < 768 ? "/mobile/chats" : "/chats"}`}
               className="group"
             >
               <div className="my-1 border-gray-500 bg-[#FBFBFB] dark:bg-[#7077A1] px-2 py-2 flex justify-between items-center rounded">

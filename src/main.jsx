@@ -6,6 +6,7 @@ import LoginSignUp from "./components/LoginSignUp.jsx";
 import { MenuContextProvider } from "./context/MenuContext.jsx";
 import LoggedInUserCnxtProvider from "./context/LoggedInUserCnxtProvider.jsx";
 import "./index.css";
+import ChatSec from "./components/ChatSec.jsx";
 
 const chatRoute = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const chatRoute = createBrowserRouter([
   {
     path: "/signup",
     element: <LoggedInUserCnxtProvider><LoginSignUp /></LoggedInUserCnxtProvider>,
+  },
+  {
+    path: "/mobile/chats",
+    element: <ChatSec />
   },
   // Add the wildcard route for redirection
   {

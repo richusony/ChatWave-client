@@ -28,7 +28,7 @@ const Chats = () => {
   return (
 
     <AuthContextProvider>
-      {screenWidth < 767 ? (
+      {/* {screenWidth < 767 ? (
         <div className="px-3 py-3 h-screen flex flex-col justify-center items-center">
           <h1 className="text-center italic text-xl">
             "Hope one day I will build <span className="text-[#6c44fa] font-semibold">ChatWave</span> for mobile as well."
@@ -36,7 +36,7 @@ const Chats = () => {
           <h2 className="mt-2 text-gray-500 text-center">Till then enjoy with web services💜</h2>
         </div>
       )
-        : (
+        : ( */}
           <SocketContextProvider>
             <SelectedChat.Provider value={{ openWindow, setOpenWindow, notificationPage, setNotificationPage, selectedId, setSelectedId }}>
               {!user && <Navigate to="/" />}
@@ -49,8 +49,8 @@ const Chats = () => {
               </div>
             </SelectedChat.Provider>
           </SocketContextProvider>
-        )
-      }
+        {/* )
+      } */}
     </AuthContextProvider>
 
 
