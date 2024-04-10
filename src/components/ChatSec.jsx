@@ -134,7 +134,7 @@ const ChatSec = () => {
               </div>
               <div className="ml-2">
                 <span className="font-semibold dark:text-gray-300">
-                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}</p> <p className="text-xs text-gray-400">{onlineUsers.includes(user._id) ? "Online" : "Offline"}</p>
+                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}</p> {onlineUsers.includes(user._id) ?<p className="text-xs text-gray-400">Online</p> :""}
                 </span>
               </div>
             </div>
