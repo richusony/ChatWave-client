@@ -24,11 +24,11 @@ const fetchNotifications = async () => {
     }
 
   return (
-    <div className="transition delay-150 ease-linear px-3 py-2 absolute h-72 w-[500px] bg-[#E1DFEA] z-50 translate-y-[50%] translate-x-[50%] left-[10%] rounded-xl shadow-xl overflow-hidden">
+    <div className="transition delay-150 ease-linear px-3 py-2  h-72 w-full md:w-1/2  bg-[#E1DFEA] z-50 translate-y-[50%] md:translate-x-[50%] md:left-[10%] absolute rounded-xl shadow-xl overflow-hidden">
       <h1 className="my-1 text-center font-semibold text-gray-600">Notifications</h1>
 
       <div className="pb-10 h-full overflow-auto scroll-smooth">
-        {notification ? notification?.map((notify) => (
+        {notification.length > 0 ? notification?.map((notify) => (
           <div key={notify._id} className='mb-1 px-2 py-2 relative flex items-center bg-[#F1F1F1] rounded-md shadow-sm'>
             <div className='h-12 w-12'>
               <img className='h-full w-full object-cover rounded-full' src={notify.senderId.profileImage} alt="user" />
@@ -44,7 +44,9 @@ const fetchNotifications = async () => {
               {/* <span className="ml-5"><FontAwesomeIcon className='hover:text-[#6c44fa] cursor-pointer' icon={faClose}/></span> */}
             </div>
           </div>
-        )) : ""}
+        )) : <>
+            <h1 className='mt-5 text-gray-500 text-xl text-center'>No nofications</h1>
+          </>}
 
 
       </div>

@@ -12,13 +12,14 @@ import { useMenuContext } from "../context/MenuContext.jsx";
 import MenuBar from "./MenuBar.jsx";
 import { AuthContextProvider } from "../context/AuthContext.jsx";
 import useScreen from "../Hooks/useScreen.js";
+import NotificationPage from "./NotificationPage.jsx";
 
 
 const Chats = () => {
 
   const { user } = useLoggedInUser();
   const { menuBar } = useMenuContext();
-  const { openWindow, selectedId } = useSelectedChat();
+  const { openWindow, selectedId, notificationPage } = useSelectedChat();
   const screenWidth = useScreen();
 
   // console.log("menu ", menuBar)
@@ -30,15 +31,19 @@ const Chats = () => {
       <SocketContextProvider>
 
         {!user && <Navigate to="/" />}
-        <div className="transition delay-150 ease-linear w-full h-full flex overflow-hidden">
-          {openWindow && <FindUserPage />}
+        <div className="transition delay-150 ease-linear w-full h-full flex overflow-hidden relative">
+
 
           {screenWidth < 768 ? (<>
             {
               menuBar ?
                 <MenuBar /> :
-                selectedId == null ?
-                  <UsersList /> :
+                selectedId == null ? <>
+                  <UsersList />
+                  {openWindow && <FindUserPage />}
+                  {notificationPage && <NotificationPage />}
+                </>
+                  :
                   <div className={`w-full md:w-2/3 h-full bg-[#E8E8F9]`}>
                     <ChatSec />
                   </div>
@@ -47,7 +52,10 @@ const Chats = () => {
           )
             :
             (
-              <>{menuBar ? <MenuBar /> : <UsersList />}
+              <>
+                {openWindow && <FindUserPage />}
+                {notificationPage && <NotificationPage />}
+                {menuBar ? <MenuBar /> : <UsersList />}
                 <div className={`hidden md:block w-full md:w-2/3 h-full bg-[#E8E8F9]`}>
                   {selectedId ? <ChatSec /> : <InitialPage />}
                 </div>

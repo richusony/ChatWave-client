@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react'
 import { useSelectedChat } from '../context/SelectedChat';
 import { useLoggedInUser } from '../context/LoggedInUserCnxtProvider';
+import useScreen from '../Hooks/useScreen';
 
 const FindUserPage = () => {
   const [searchInput, setSearchInput] = useState("");
   const {user} = useLoggedInUser();
+  const screenWidth = useScreen();
   const [friendsList, setFriendsList] = useState([]);
   const [usersData, setUsersData] = useState([]);
   const {setOpenWindow, setSelectedId} = useSelectedChat()
@@ -50,7 +52,7 @@ const handleFollowUser = async (userId) => {
   }
 }
   return (
-    <div className='px-3 py-3 translate-y-[50%] translate-x-[50%] absolute h-80 w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
+    <div className='px-3 py-3 translate-y-[50%] md:translate-x-[50%] absolute h-80 w-full md:w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
       <div className='flex justify-end text-xl'><FontAwesomeIcon className='hover:text-[#6c44fa] cursor-pointer' onClick={()=>setOpenWindow(false)} icon={faClose}/></div>
       <form>
         <input type="text" value={searchInput} onChange={(e)=>setSearchInput(e.target.value)} placeholder='Search Users' className='py-1 w-full bg-transparent outline-none border-b-2 border-violet-600' />
@@ -64,8 +66,8 @@ const handleFollowUser = async (userId) => {
           </div>
 
           <div className='ml-3 flex flex-col justify-center items-start'>
-            <p className='font-semibold text-sm'>{person.fullname}</p>
-            <p className='text-gray-500 text-sm'>@{person.username}</p>
+            <p className='font-semibold text-sm'>{screenWidth < 768 && person.fullname.length > 15 ? person.fullname.substring(0,8) + "..." : person.fullname}</p>
+            <p className='text-gray-500 text-sm'>@{screenWidth < 768 && person.username.length > 10 ? person.username.substring(0,8):person.username }</p>
           </div>
 
           {friendsList && (

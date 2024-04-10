@@ -14,11 +14,13 @@ import { extractTime } from "../utils/helper.js";
 import { useSocketContext } from "../context/SocketContext.jsx";
 import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
 import "../chat.css";
+import useScreen from "../Hooks/useScreen.js";
 
 const ChatSec = () => {
   const { selectedId } = useSelectedChat();
   console.log("ChatSec selected Id : ", selectedId);
   const isOnline = useOnline();
+ const screenWidth =  useScreen();
   const { socket, onlineUsers } = useSocketContext();
   const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
   const [messages, setMessages] = useState([]);
@@ -132,7 +134,7 @@ const ChatSec = () => {
               </div>
               <div className="ml-2">
                 <span className="font-semibold dark:text-gray-300">
-                  <p> {user.fullname}</p> <p className="text-xs text-gray-400">{onlineUsers.includes(user._id) ? "Online" : "Offline"}</p>
+                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}</p> <p className="text-xs text-gray-400">{onlineUsers.includes(user._id) ? "Online" : "Offline"}</p>
                 </span>
               </div>
             </div>

@@ -104,7 +104,7 @@ const UsersList = () => {
                   className={`transition delay-75 ease-linear ${notificationPage ? 'text-[#6c44fa]' : 'text-gray-600'} hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer`}
                   icon={faBell}
                 />
-                {notificationPage && <NotificationPage />}
+                
               </h2>
               <h2 className="text-xl">
                 <FontAwesomeIcon onClick={() => { setOpenWindow(true), setNotificationPage(false) }}
@@ -152,7 +152,7 @@ const UsersList = () => {
 
                   <div>
                     <h3 className="font-semibold  dark:text-gray-900">
-                      {user.fullname}
+                      {user.fullname.length > 15 && screenWidth < 768 ? user.fullname.substring(0,15) + "..." : user.fullname}
                     </h3>
                     <span className="text-gray-800 text-sm">
                       @{user.username}
