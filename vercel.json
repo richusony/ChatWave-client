@@ -15,10 +15,6 @@
     {
       "src": "/signup",
       "dest": "/"
-    },
-    {
-      "src": "/mobile/chats",
-      "dest":"/"
     }
   ]
 }
