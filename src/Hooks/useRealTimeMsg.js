@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSocketContext } from "../context/SocketContext";
-import notificationSound from "../assets/sounds/notification-sound.mp3"
+import notificationSound from "../assets/sounds/ElevenLabs_2024-04-10T04_49_24_Matilda.mp3"
 
 useSocketContext;
 const useRealTimeMsg = (messages, setMessages) => {

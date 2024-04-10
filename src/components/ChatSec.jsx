@@ -80,6 +80,9 @@ const ChatSec = () => {
   };
 
   const handleInputData = (e) => {
+    if (e.target.value.trim() == "") {
+      socket.emit("userStoppedTyping", { receiverId: selectedId });
+    }
     setInput(e.target.value);
   };
 

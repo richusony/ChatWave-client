@@ -8,7 +8,7 @@ const NotificationPage = () => {
 
   const handleAcceptRequest = async (userId) => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/accept-request/${userId}`, { credentials: "include" });
-    // console.log(res);
+    console.log("accept :: ",res); 
     if(res.status == 200) {
       fetchNotifications();
     } else {
