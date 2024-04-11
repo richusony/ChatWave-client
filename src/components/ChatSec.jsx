@@ -6,6 +6,7 @@ import {
   faPhone,
   faSpinner,
   faVideo,
+  faWarning,
   faWifi,
 } from "@fortawesome/free-solid-svg-icons";
 import useOnline from "../Hooks/useOnline.js";
@@ -18,30 +19,30 @@ import useScreen from "../Hooks/useScreen.js";
 
 const ChatSec = () => {
   const { selectedId } = useSelectedChat();
-  console.log("ChatSec selected Id : ", selectedId);
   const isOnline = useOnline();
   const screenWidth = useScreen();
   const { socket, onlineUsers } = useSocketContext();
   const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
+  const [menuOptions, setMenuOptions] = useState(false);
   const [messages, setMessages] = useState([]);
   const [realTimeMessages, setRealTimeMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [errorMsg, setErrorMsg] = useState(null);
   const [user, setUser] = useState({});
   const [sendLoading, setSendLoading] = useState(false);
   const lastMessage = useRef();
+ 
 
   const handleUserChats = async () => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`, { credentials: "include" });
     const data = await res.json();
     // console.log("const messages = ",data);
     const groupedMessages = groupMessagesByDate(data);
-    console.log("grouped :: ", groupedMessages);
     setMessages(groupedMessages);
     setRealTimeMessages(null);
   };
 
   const todayDate = getTodayDate();
-  console.log("todayDate ::: ", todayDate)
   const yesterdayDate = getYesterdayDate();
 
 
@@ -102,9 +103,12 @@ const ChatSec = () => {
       credentials: "include",
       body: JSON.stringify(reqData),
     });
-    if (res.status == 201) setInput("");
     const resData = await res.json();
+    if (res.status == 201) setInput("");
     setSendLoading(false);
+    if (res.status !== 201) {
+      setErrorMsg(resData.err);
+    }
   };
 
   const handleKeyDown = (e) => {
@@ -153,7 +157,12 @@ const ChatSec = () => {
     };
   }, [socket]);
 
-
+  const handleBlockUser = async () => {
+    const confirm = window.confirm("Are you sure about blocking this user?");
+    if (!confirm) return;
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/block/${selectedId}`, { credentials: "include" });
+    const resData = await reqData.json();
+  }
 
   return (
     <>
@@ -177,14 +186,20 @@ const ChatSec = () => {
             </div>
 
             <div className="w-28 flex justify-between items-center text-lg text-gray-700">
-              <span className="cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 hover:text-[#6c44fa]">
+              <span className="cursor-not-allowed dark:text-[#6c44fa] dark:hover:text-gray-800 hover:text-[#6c44fa]">
                 <FontAwesomeIcon icon={faVideo} />
               </span>
-              <span className="cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 hover:text-[#6c44fa]">
+              <span className="cursor-not-allowed dark:text-[#6c44fa] dark:hover:text-gray-800 hover:text-[#6c44fa]">
                 <FontAwesomeIcon icon={faPhone} />
               </span>
-              <span className="cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 hover:text-[#6c44fa]">
-                <FontAwesomeIcon icon={faEllipsisV} />
+              <span className={`relative cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 ${!menuOptions && "hover:text-[#6c44fa]"}`} >
+                <FontAwesomeIcon icon={faEllipsisV} onClick={() => setMenuOptions((prev) => !prev)} />
+                {menuOptions && <span className="border dark:border-[#2D3250] px-2 py-2 w-52 dark:text-white hover:text-gray-800 dark:hover:text-white absolute bg-[#F1F1F1] dark:bg-[#2D3250] right-full top-full rounded shadow-xl">
+                  <p key="headerBtn1" onClick={handleBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Block</p>
+                  <p key="headerBtn2" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Theme</s></p>
+                  <p key="headerBtn3" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Clear All</s></p>
+                  <p key="headerBtn4" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Unfollow</s></p>
+                </span>}
               </span>
             </div>
           </div>
@@ -194,7 +209,6 @@ const ChatSec = () => {
         <div className="px-3 h-[81vh] overflow-auto scroll-smooth">
           {messages.length > 0 && messages.map((msg) => (
             <>
-
               <div className="my-10 text-center">
                 <span className="px-3 py-2 bg-white rounded-md shadow-xl text-gray-700">
                   {msg.dateString == todayDate.replaceAll(",", "") ? "Today" : msg.dateString == yesterdayDate.replaceAll(",", "") ? "Yesterday" : msg.dateString}
@@ -256,7 +270,8 @@ const ChatSec = () => {
         </div>
 
         {isOnline ? (
-          <div className="px-2 py-2 w-full flex items-center justify-between cursor-text">
+          <div className="relative px-2 py-2 w-full flex items-center justify-between cursor-text">
+            <div className={`transition delay-150 ease-linear absolute -top-10 ${errorMsg? "translate-x-0": "-translate-x-full opacity-0"} bg-[#7351F2] text-center px-4 py-2 rounded text-white dark:text-gray-800 shadow-md`}><FontAwesomeIcon icon={faWarning} /> <span>{errorMsg}</span></div>
             <input
               className="outline-none bg-white dark:bg-[#2D3250] dark:text-gray-300 w-screen py-3 px-3 rounded-full"
               type="text"
