@@ -41,7 +41,6 @@ getUserFriendList();
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/friends-list`,{credentials:"include"})
     const resData = await res.json();
     setFriendsList(resData);
-    console.log("friends list :: ", resData);
   }
 
 const handleFollowUser = async (userId) => {

@@ -16,6 +16,7 @@ import { useSocketContext } from "../context/SocketContext.jsx";
 import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
 import "../chat.css";
 import useScreen from "../Hooks/useScreen.js";
+import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider.jsx";
 
 const ChatSec = () => {
   const { selectedId } = useSelectedChat();
@@ -31,7 +32,7 @@ const ChatSec = () => {
   const [user, setUser] = useState({});
   const [sendLoading, setSendLoading] = useState(false);
   const lastMessage = useRef();
- 
+  const { user: loggedInUser, setUser:setLoggedInUser } = useLoggedInUser()
 
   const handleUserChats = async () => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`, { credentials: "include" });
@@ -112,7 +113,6 @@ const ChatSec = () => {
   };
 
   const handleKeyDown = (e) => {
-    console.log("keyisDown")
     if (e.target.value.trim() !== "") {
       socket?.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
     }
@@ -130,24 +130,12 @@ const ChatSec = () => {
     setInput(e.target.value);
   };
 
-  // const handleKeyDownForInput = (e) => {
-  //   console.log("keyisDown")
-  //   socket.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
-  // };
-
-  // const handleKeyUpForInput = (e) => {
-  //   console.log("keyisUp")
-  //   socket.emit("userStoppedTyping", { receiverId: selectedId });
-  // };
-
-  // Listen for userIsTyping and userStoppedTyping events from the server
   useEffect(() => {
     socket?.on("userIsTyping", () => {
       setUserIsTyping(true);
     });
 
     socket?.on("userStoppedTyping", () => {
-      console.log("isStopped")
       setUserIsTyping(false);
     });
 
@@ -162,13 +150,24 @@ const ChatSec = () => {
     if (!confirm) return;
     const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/block/${selectedId}`, { credentials: "include" });
     const resData = await reqData.json();
+    sessionStorage.setItem("login-user", JSON.stringify(resData));
+    setLoggedInUser(resData);
+  }
+
+  const handleUnBlockUser = async () => {
+    const confirm = window.confirm("Are you sure about unblocking this user?");
+    if (!confirm) return;
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/unblock/${selectedId}`, { credentials: "include" });
+    const resData = await reqData.json();
+    sessionStorage.setItem("login-user", JSON.stringify(resData));
+    setLoggedInUser(resData);
   }
 
   return (
     <>
       <div className="w-full h-screen relative overflow-hidden bg-[#E8E8F9] dark:bg-[#424769] ">
         {/* Header  */}
-        <div className="py-2 px-4 bg-white dark:bg-[#2D3250] shadow-sm md:shadow-none right-0">
+        <div key="headerContainer" className="py-2 px-4 bg-white dark:bg-[#2D3250] shadow-sm md:shadow-none right-0">
           <div className="flex justify-between items-center">
             <div className="flex justify-center items-center">
               <div className="w-11">
@@ -195,7 +194,8 @@ const ChatSec = () => {
               <span className={`relative cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 ${!menuOptions && "hover:text-[#6c44fa]"}`} >
                 <FontAwesomeIcon icon={faEllipsisV} onClick={() => setMenuOptions((prev) => !prev)} />
                 {menuOptions && <span className="border dark:border-[#2D3250] px-2 py-2 w-52 dark:text-white hover:text-gray-800 dark:hover:text-white absolute bg-[#F1F1F1] dark:bg-[#2D3250] right-full top-full rounded shadow-xl">
-                  <p key="headerBtn1" onClick={handleBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Block</p>
+                  {loggedInUser.friends.some((frnd) => frnd.friendId == user._id && frnd.blockByUser == true) ? <p key="headerBtn1" onClick={handleUnBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Unblock</p> :
+                    <p key="headerBtn1" onClick={handleBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Block</p>}
                   <p key="headerBtn2" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Theme</s></p>
                   <p key="headerBtn3" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Clear All</s></p>
                   <p key="headerBtn4" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Unfollow</s></p>
@@ -206,14 +206,15 @@ const ChatSec = () => {
         </div>
 
         {/* Chats  */}
-        <div className="px-3 h-[81vh] overflow-auto scroll-smooth">
-          {messages.length > 0 && messages.map((msg) => (
-            <>
-              <div className="my-10 text-center">
+        <div key="messagesContainer" className="px-3 h-[81vh] overflow-auto scroll-smooth">
+          {messages.length > 0 && messages.map((msg,index) => (
+            <div key={"messagesContainer"+index}>
+              <div key={"date" + msg._id} className="my-10 text-center">
                 <span className="px-3 py-2 bg-white rounded-md shadow-xl text-gray-700">
                   {msg.dateString == todayDate.replaceAll(",", "") ? "Today" : msg.dateString == yesterdayDate.replaceAll(",", "") ? "Yesterday" : msg.dateString}
                 </span>
               </div>
+
               {msg.messages.length > 0 && msg.messages.map((msgs) =>
                 msgs.receiverId == selectedId ? (
                   <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
@@ -237,7 +238,7 @@ const ChatSec = () => {
                   </div>
                 )
               )}
-            </>
+            </div>
           ))}
           {realTimeMessages && realTimeMessages.map((msgs) => msgs.receiverId == selectedId ? (
             <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
@@ -270,8 +271,8 @@ const ChatSec = () => {
         </div>
 
         {isOnline ? (
-          <div className="relative px-2 py-2 w-full flex items-center justify-between cursor-text">
-            <div className={`transition delay-150 ease-linear absolute -top-10 ${errorMsg? "translate-x-0": "-translate-x-full opacity-0"} bg-[#7351F2] text-center px-4 py-2 rounded text-white dark:text-gray-800 shadow-md`}><FontAwesomeIcon icon={faWarning} /> <span>{errorMsg}</span></div>
+          <div key="inputContainer" className="relative px-2 py-2 w-full flex items-center justify-between cursor-text">
+            <div className={`transition delay-150 ease-linear absolute -top-10 ${errorMsg ? "translate-x-0" : "-translate-x-full opacity-0"} bg-[#7351F2] text-center px-4 py-2 rounded text-white dark:text-gray-800 shadow-md`}><FontAwesomeIcon icon={faWarning} /> <span>{errorMsg}</span></div>
             <input
               className="outline-none bg-white dark:bg-[#2D3250] dark:text-gray-300 w-screen py-3 px-3 rounded-full"
               type="text"
@@ -289,7 +290,7 @@ const ChatSec = () => {
             </span>
           </div>
         ) : (
-          <div className="px-2 sticky py-2 w-full flex items-center justify-center cursor-text text-center">
+          <div key="offlineContainer" className="px-2 sticky py-2 w-full flex items-center justify-center cursor-text text-center">
             <h1 className="text-center text-gray-500 cursor-wait text-xl font-semibold">
               You're Offline{" "}
               <FontAwesomeIcon className="hover:text-[#6c44fa]" icon={faWifi} />

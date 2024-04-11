@@ -84,7 +84,6 @@ const UsersList = () => {
 
   const getAllMessages = async () => {
     const res = await axios.get(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/get/messages`, { withCredentials: true });
-    console.log(res);
     setUserData(res.data);
     setFilteredUser(res.data);
   }

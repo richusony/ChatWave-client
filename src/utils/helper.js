@@ -19,7 +19,7 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
       body: JSON.stringify(reqData),
     }
   );
-  console.log("checking login : ", res);
+ 
   if (res.status == 201 || res.status == 200) {
     const resData = await res.json();
     sessionStorage.setItem("login-user", JSON.stringify(resData));
@@ -77,10 +77,6 @@ export function getYesterdayDate() {
   yesterday.setDate(today.getDate() - 1);
   return formatDate(yesterday);
 }
-
-// Example usage
-const todayDate = getTodayDate();
-const yesterdayDate = getYesterdayDate();
 
 
 
