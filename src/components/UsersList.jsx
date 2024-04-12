@@ -163,7 +163,7 @@ const UsersList = () => {
                       {user.senderInfo.fullname.length > 15 && screenWidth < 768 ? user.senderInfo.fullname.substring(0, 15) + "..." : user.senderInfo.fullname}
                     </h3>
                     <span className="text-gray-800 text-sm">
-                      {user.message}
+                      {user.message.length > 35 ? user.message.substring(0, 15) + "..." : user.message}
                     </span>
                   </div>
                 </div>
