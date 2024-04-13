@@ -220,7 +220,7 @@ const ChatSec = () => {
                 msgs.receiverId == selectedId ? (
                   <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
                     <div className="py-1 px-2 max-w-[80%] md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
-                      <p className="text-gray-700">{msgs.message}</p>
+                      <p className="text-gray-700 break-words">{msgs.message}</p>
                       <div className="text-end text-xs">
                         <p className="text-slate-500">{extractTime(msgs.createdAt)}</p>
                       </div>
@@ -229,7 +229,7 @@ const ChatSec = () => {
                 ) : (
                   <div ref={lastMessage} key={msgs._id} className="my-2 w-full flex justify-start">
                     <div className="py-1 px-2 max-w-[80%] md:w-fit bg-[#7351F2] rounded-xl shadow-md">
-                      <p className="text-white dark:text-gray-800">{msgs.message}</p>
+                      <p className="text-white dark:text-gray-800 break-words">{msgs.message}</p>
                       <div className="text-end text-xs">
                         <p className="text-gray-200 dark:text-gray-700">
                           {extractTime(msgs.createdAt)}
