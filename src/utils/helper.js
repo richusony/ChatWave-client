@@ -24,6 +24,8 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
     const resData = await res.json();
     sessionStorage.setItem("login-user", JSON.stringify(resData));
     setUser(resData);
+  } else{
+    alert(res.status, "error while logging")
   }
   // console.log("response from backend  ", resData);
 }
