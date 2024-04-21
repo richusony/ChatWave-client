@@ -11,22 +11,22 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useScreen from "../Hooks/useScreen.js";
 import { ThemeProvdier } from "../context/theme";
-import { getAllMessages } from "../utils/helper.js"
+import { getAllGroups } from "../utils/helper.js";
 import { useMenuContext } from "../context/MenuContext.jsx";
 import { useSelectedChat } from "../context/SelectedChat.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const UsersList = () => {
+const GroupList = () => {
   const screenWidth = useScreen();
-  const { setMenuBar } = useMenuContext()
-  const [userData, setUserData] = useState([]);
+  const { setMenuBar, setGroupsPage } = useMenuContext()
+  const [groupData, setGroupData] = useState([]);
   const [searchUser, setSearchUser] = useState("");
-  const [filteredUser, setFilteredUser] = useState([]);
+  const [filteredGroups, setFilteredGroups] = useState([]);
   const [themeMode, setThemeMode] = useState(localStorage.getItem("theme"));
-  const { selectedId, setSelectedId, selectedGroupId, setOpenWindow, notificationPage, setNotificationPage } = useSelectedChat();
+  const { setSelectedId, selectedGroupId, setSelectedGroupId, setOpenWindow, notificationPage, setNotificationPage } = useSelectedChat();
 
   useEffect(() => {
-    getAllMessages(setUserData, setFilteredUser);
+    getAllGroups(setGroupData, setFilteredGroups);
   }, []);
 
   useEffect(() => {
@@ -41,12 +41,12 @@ const UsersList = () => {
   const handleSearchUsers = useCallback(() => {
     const searchTerm = searchUser.trim().toLowerCase(); // Trim and convert search input to lowercase
     if (searchTerm !== "") {
-      const newData = userData.filter((user) =>
+      const newData = groupData.filter((user) =>
         user.senderInfo.fullname.toLowerCase().includes(searchTerm)
       );
-      setFilteredUser(newData);
+      setFilteredGroups(newData);
     } else {
-      setFilteredUser(userData); // Reset to original data when search input is empty
+      setFilteredGroups(groupData); // Reset to original data when search input is empty
     }
   }, [searchUser]);
 
@@ -69,11 +69,11 @@ const UsersList = () => {
 
   return (
     <ThemeProvdier value={{ themeMode, darkTheme, lightTheme }}>
-      <div className={`${selectedGroupId? "hidden": ""} w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-2 px-2 overflow-hidden`}>
+      <div className={`${selectedGroupId?"hidden":""} w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-2 px-2 overflow-hidden`}>
         <div className="mb-2 px-2 py-2">
           <div className="px-2 flex justify-between">
             <h2 className="text-xl">
-              <FontAwesomeIcon onClick={() => setMenuBar(true)}
+              <FontAwesomeIcon onClick={() => {setMenuBar(true); setGroupsPage(false)}}
                 icon={faBars}
                 className="hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer"
               />
@@ -120,35 +120,36 @@ const UsersList = () => {
         </div>
 
         <div className="h-5/6 overflow-auto">
-          {filteredUser.map((user) => (
+          {filteredGroups.map((group) => (
             <Link
-              onClick={() => setSelectedId(user.senderId)}
-              key={user.senderId}
+              onClick={() => {setSelectedGroupId(group._id); setSelectedId(null)}}
+              key={group._id}
               to="/chats"
               className="group"
             >
               <div className="my-1 border-gray-500 bg-[#FBFBFB] dark:bg-[#7077A1] px-2 py-2 flex justify-between items-center rounded">
                 <div className="flex items-center justify-center">
-                  <div className="mr-2 w-14">
+                  <div className="mr-3 w-14">
                     <img
                       className="w-full h-full rounded-full object-cover"
-                      src={user.senderInfo.profileImage}
-                      alt="user"
+                      src={group.groupImg}
+                      alt="group"
                     />
                   </div>
 
                   <div>
-                    <h3 className="font-semibold  dark:text-gray-900">
-                      {user.senderInfo.fullname.length > 15 && screenWidth < 768 ? user.senderInfo.fullname.substring(0, 15) + "..." : user.senderInfo.fullname}
+                    <h3 className="font-semibold text-lg  dark:text-gray-900">
+                      {group.groupName.length > 15 && screenWidth < 768 ? group.groupName.substring(0, 15) + "..." : group.groupName}
                     </h3>
-                    <span className="text-gray-800 text-sm">
-                      {user.message.length > 35 ? user.message.substring(0, 15) + "..." : user.message}
-                    </span>
+                    {/* <span className="text-gray-800 text-sm">
+                      {group.message.length > 35 ? group.message.substring(0, 15) + "..." : group.message}
+                        hello
+                    </span> */}
                   </div>
                 </div>
 
                 <div>
-                  <span className={`${selectedId == user.senderId ? "text-[#6c44fa]" : "text-gray-500"} dark:text-gray-800 text-xl group-hover:text-[#6c44fa]`}>
+                  <span className={`${selectedGroupId == group._id ? "text-[#6c44fa]" : "text-gray-500"} dark:text-gray-800 text-xl group-hover:text-[#6c44fa]`}>
                     <FontAwesomeIcon icon={faAngleRight} />
                   </span>
                 </div>
@@ -161,4 +162,4 @@ const UsersList = () => {
   );
 };
 
-export default UsersList;
+export default GroupList;

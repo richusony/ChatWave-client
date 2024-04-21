@@ -38,9 +38,9 @@ const InitialPage = () => {
       </p>
 
       <div className="mt-5 text-center">
-        <button className="bg-[#9c9cff] hover:bg-[#7474ff] py-2 px-4 rounded-full text-white shadow-md">
+        <a href="https://github.com/richusony/ChatWave.git" className="bg-[#9c9cff] hover:bg-[#7474ff] py-2 px-4 rounded-full text-white shadow-md">
           Learn more
-        </button>
+        </a>
       </div>
     </div>
   );

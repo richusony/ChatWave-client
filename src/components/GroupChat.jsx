@@ -18,29 +18,35 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider.jsx";
 import { extractTime, getTodayDate, getYesterdayDate } from "../utils/helper.js";
 
-const ChatSec = () => {
+const GroupChat = () => {
+  const membersMap = [];
   const isOnline = useOnline();
   const lastMessage = useRef();
   const screenWidth = useScreen();
   const [user, setUser] = useState({});
   const [input, setInput] = useState("");
-  const { selectedId } = useSelectedChat();
+  const [members, setMembers] = useState([]);
   const [messages, setMessages] = useState([]);
+  const { selectedGroupId } = useSelectedChat();
   const [errorMsg, setErrorMsg] = useState(null);
+  const [groupData, setGroupData] = useState(null);
   const { socket, onlineUsers } = useSocketContext();
   const [sendLoading, setSendLoading] = useState(false);
   const [menuOptions, setMenuOptions] = useState(false);
-  const [userIsTyping, setUserIsTyping] = useState(false); // State to track if the receiver is typing
+  const [userIsTyping, setUserIsTyping] = useState(false);
   const [realTimeMessages, setRealTimeMessages] = useState([]);
-  const { user: loggedInUser, setUser:setLoggedInUser } = useLoggedInUser();
+  const { user: loggedInUser, setUser: setLoggedInUser } = useLoggedInUser();
 
-  const handleUserChats = async () => {
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/${selectedId}`, { credentials: "include" });
+  const handleGroupChats = async () => {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/group/${selectedGroupId}`, { credentials: "include" });
     const data = await res.json();
-    // console.log("const messages = ",data);
-    const groupedMessages = groupMessagesByDate(data);
+    console.log("const messages = ", data);
+    setGroupData(data);
+    const groupedMessages = groupMessagesByDate(data.messages);
     setMessages(groupedMessages);
     setRealTimeMessages(null);
+    data?.participants?.forEach((mem) => { membersMap[mem._id] = mem.fullname });
+    setMembers(membersMap)
   };
 
   const todayDate = getTodayDate();
@@ -76,28 +82,29 @@ const ChatSec = () => {
 
   useRealTimeMsg(realTimeMessages, setRealTimeMessages);
 
-  const getUserDetails = async () => {
-    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/${selectedId}`, { credentials: "include" });
-    const resData = await reqData.json();
-    setUser(resData);
-  };
+  // const getGroupDetails = async () => {
+  //   const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/group/${selectedGroupId}`, { credentials: "include" });
+  //   const resData = await reqData.json();
+  //   setUser(resData);
+
+  // };
 
   useEffect(() => {
-    getUserDetails();
-    handleUserChats();
-  }, [selectedId, sendLoading]);
+    // getGroupDetails();
+    handleGroupChats();
+  }, [selectedGroupId, sendLoading]);
 
   useEffect(() => {
     lastMessage.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if(input == "") return;
+    if (input == "") return;
     setSendLoading(true);
     const reqData = {
       message: input,
     };
-    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/send/${selectedId}`, {
+    const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/group/send/${selectedGroupId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,10 +122,10 @@ const ChatSec = () => {
 
   const handleKeyDown = (e) => {
     if (e.target.value.trim() !== "") {
-      socket?.emit("userTyping", { receiverId: selectedId, message: "Typing..." });
+      socket?.emit("userTyping", { receiverId: selectedGroupId, message: "Typing..." });
     }
     if (e.key === "Enter") {
-      socket?.emit("userStoppedTyping", { receiverId: selectedId });
+      socket?.emit("userStoppedTyping", { receiverId: selectedGroupId });
       e.preventDefault();
       handleSendMessage();
     }
@@ -126,7 +133,7 @@ const ChatSec = () => {
 
   const handleInputData = (e) => {
     if (e.target.value.trim() == "") {
-      socket?.emit("userStoppedTyping", { receiverId: selectedId });
+      socket?.emit("userStoppedTyping", { receiverId: selectedGroupId });
     }
     setInput(e.target.value);
   };
@@ -149,7 +156,7 @@ const ChatSec = () => {
   const handleBlockUser = async () => {
     const confirm = window.confirm("Are you sure about blocking this user?");
     if (!confirm) return;
-    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/block/${selectedId}`, { credentials: "include" });
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/block/${selectedGroupId}`, { credentials: "include" });
     const resData = await reqData.json();
     sessionStorage.setItem("login-user", JSON.stringify(resData));
     setLoggedInUser(resData);
@@ -158,7 +165,7 @@ const ChatSec = () => {
   const handleUnBlockUser = async () => {
     const confirm = window.confirm("Are you sure about unblocking this user?");
     if (!confirm) return;
-    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/unblock/${selectedId}`, { credentials: "include" });
+    const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/unblock/${selectedGroupId}`, { credentials: "include" });
     const resData = await reqData.json();
     sessionStorage.setItem("login-user", JSON.stringify(resData));
     setLoggedInUser(resData);
@@ -174,13 +181,13 @@ const ChatSec = () => {
               <div className="w-11">
                 <img
                   className="w-full h-full object-cover rounded-full"
-                  src={user.profileImage}
-                  alt="user"
+                  src={groupData?.groupImg}
+                  alt="groupImage"
                 />
               </div>
               <div className="ml-2">
                 <span className="font-semibold dark:text-gray-300">
-                  <p> {user.fullname?.length > 15 && screenWidth < 768 ? user.fullname.substring(0, 15) + "..." : user.fullname}</p> {onlineUsers.includes(user._id) ? <p className="text-xs text-gray-400">Online</p> : ""}
+                  <p> {groupData?.groupName?.length > 15 && screenWidth < 768 ? groupData?.groupName.substring(0, 15) + "..." : groupData?.groupName}</p> {onlineUsers.includes(groupData?._id) ? <p className="text-xs text-gray-400">Online</p> : ""}
                 </span>
               </div>
             </div>
@@ -208,8 +215,8 @@ const ChatSec = () => {
 
         {/* Chats  */}
         <div key="messagesContainer" className="px-3 h-[81vh] overflow-auto scroll-smooth">
-          {messages.length > 0 && messages.map((msg,index) => (
-            <div key={"messagesContainer"+index}>
+          {messages.length > 0 && messages.map((msg, index) => (
+            <div key={"messagesContainer" + index}>
               <div key={"date" + msg._id} className="my-10 text-center">
                 <span className="px-3 py-2 bg-white rounded-md shadow-xl text-gray-700">
                   {msg.dateString == todayDate.replaceAll(",", "") ? "Today" : msg.dateString == yesterdayDate.replaceAll(",", "") ? "Yesterday" : msg.dateString}
@@ -217,9 +224,10 @@ const ChatSec = () => {
               </div>
 
               {msg.messages.length > 0 && msg.messages.map((msgs) =>
-                msgs.receiverId == selectedId ? (
+                msgs.senderId == loggedInUser._id ? (
                   <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
-                    <div className="py-1 px-2 max-w-[80%] md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+                    <div className="py-1 px-2 min-w-[35%] md:min-w-[15%] max-w-[80%] md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+                      <p className="text-xs text-[#7351F2] font-bold">You</p>
                       <p className="text-gray-700 break-words">{msgs.message}</p>
                       <div className="text-end text-xs">
                         <p className="text-slate-500">{extractTime(msgs.createdAt)}</p>
@@ -228,8 +236,9 @@ const ChatSec = () => {
                   </div>
                 ) : (
                   <div ref={lastMessage} key={msgs._id} className="my-2 w-full flex justify-start">
-                    <div className="py-1 px-2 max-w-[80%] md:w-fit bg-[#7351F2] rounded-xl shadow-md">
-                      <p className="text-white dark:text-gray-800 break-words">{msgs.message}</p>
+                    <div className="py-1 px-2 min-w-[35%] md:min-w-[15%] max-w-[80%] md:w-fit bg-[#7351F2] rounded-xl shadow-md">
+                      <p className="text-xs text-white font-bold dark:text-gray-800">{members[msgs.senderId]}</p>
+                      <p className="text-slate-100 dark:text-gray-800 break-words">{msgs.message}</p>
                       <div className="text-end text-xs">
                         <p className="text-gray-200 dark:text-gray-700">
                           {extractTime(msgs.createdAt)}
@@ -241,9 +250,10 @@ const ChatSec = () => {
               )}
             </div>
           ))}
-          {realTimeMessages && realTimeMessages.map((msgs) => msgs.receiverId == selectedId ? (
+          {realTimeMessages && realTimeMessages.map((msgs) => msgs.senderId == loggedInUser._id ? (
             <div key={msgs._id} ref={lastMessage} className="my-2 w-full flex justify-end">
-              <div className="py-1 px-2 max-w-40 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+              <div className="py-1 px-2 min-w-[35%] md:min-w-[15%] max-w-52 md:w-fit bg-[#FFFFFF]  rounded-xl shadow-md">
+                <p className="text-xs text-white font-bold dark:text-gray-800">You</p>
                 <p className="text-gray-700">{msgs.message}</p>
                 <div className="text-end text-xs">
                   <p className="text-slate-500">{extractTime(msgs.createdAt)}</p>
@@ -252,7 +262,8 @@ const ChatSec = () => {
             </div>
           ) : (
             <div ref={lastMessage} key={msgs._id} className="my-2 w-full flex justify-start">
-              <div className="py-1 px-2 max-w-40 md:w-fit bg-[#7351F2] rounded-xl shadow-md">
+              <div className="py-1 px-2 min-w-[35%] md:min-w-[15%] max-w-52 md:w-fit bg-[#7351F2] rounded-xl shadow-md">
+                <p className="text-xs text-white font-bold dark:text-gray-800">Richu Sony</p>
                 <p className="text-white dark:text-gray-800">{msgs.message}</p>
                 <div className="text-end text-xs">
                   <p className="text-gray-200 dark:text-gray-700">
@@ -303,4 +314,4 @@ const ChatSec = () => {
   );
 };
 
-export default ChatSec;
+export default GroupChat;

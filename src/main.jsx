@@ -1,16 +1,12 @@
+import "./index.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Chats from "./components/Chats.jsx";
-import ChatSec from "./components/ChatSec.jsx";
 import LoginSignUp from "./components/LoginSignUp.jsx";
 import { MenuContextProvider } from "./context/MenuContext.jsx";
-import LoggedInUserCnxtProvider from "./context/LoggedInUserCnxtProvider.jsx";
-import "./index.css";
 import { SelectedChatProvider } from "./context/SelectedChat.jsx";
-import { SocketContextProvider } from "./context/SocketContext.jsx";
-import { AuthContextProvider } from "./context/AuthContext.jsx";
-import UsersList from "./components/UsersList.jsx";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import LoggedInUserCnxtProvider from "./context/LoggedInUserCnxtProvider.jsx";
 
 const chatRoute = createBrowserRouter([
   {

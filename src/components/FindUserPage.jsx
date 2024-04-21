@@ -1,9 +1,9 @@
+import useScreen from '../Hooks/useScreen';
+import { useEffect, useState } from 'react';
+import { useSelectedChat } from '../context/SelectedChat';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useContext, useEffect, useState } from 'react'
-import { useSelectedChat } from '../context/SelectedChat';
 import { useLoggedInUser } from '../context/LoggedInUserCnxtProvider';
-import useScreen from '../Hooks/useScreen';
 
 const FindUserPage = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -11,7 +11,8 @@ const FindUserPage = () => {
   const screenWidth = useScreen();
   const [friendsList, setFriendsList] = useState([]);
   const [usersData, setUsersData] = useState([]);
-  const {setOpenWindow, setSelectedId} = useSelectedChat()
+  const {setOpenWindow, setSelectedId} = useSelectedChat();
+
   useEffect(()=>{
     const searchUser =  async () => {
       if(searchInput == "") return setUsersData([]);
@@ -50,6 +51,7 @@ const handleFollowUser = async (userId) => {
     getUserFriendList();
   }
 }
+
   return (
     <div className='px-3 py-3 translate-y-[50%] md:translate-x-[50%] absolute h-80 w-full md:w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
       <div className='flex justify-end text-xl'><FontAwesomeIcon className='hover:text-[#6c44fa] cursor-pointer' onClick={()=>setOpenWindow(false)} icon={faClose}/></div>

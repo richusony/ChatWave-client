@@ -1,13 +1,14 @@
-import loginBg from "../assets/others/login-bg.jpg";
-import wave from "../assets/others/wave.png";
-import { signInWithPopup } from "firebase/auth";
-import { auth, googleProvider } from "../services/firebase";
-import { loginSignUp } from "../utils/helper";
 import { Navigate } from "react-router-dom";
+import wave from "../assets/others/wave.png";
+import { loginSignUp } from "../utils/helper";
+import { signInWithPopup } from "firebase/auth";
+import loginBg from "../assets/others/login-bg.jpg";
+import { auth, googleProvider } from "../services/firebase";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider";
 
 const LoginSignUp = () => {
   const { user, setUser } = useLoggedInUser();
+
   const googleLogin = async (e) => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -17,6 +18,7 @@ const LoginSignUp = () => {
       console.log(error);
     }
   };
+
   return (
     <div>
       {user && <Navigate to="/chats" /> }
