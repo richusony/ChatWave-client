@@ -69,7 +69,7 @@ const GroupList = () => {
 
   return (
     <ThemeProvdier value={{ themeMode, darkTheme, lightTheme }}>
-      <div className={`${selectedGroupId?"hidden":""} w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-2 px-2 overflow-hidden`}>
+      <div className={`${screenWidth < 768 ? selectedGroupId?"hidden":"" : ""} w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-2 px-2 overflow-hidden`}>
         <div className="mb-2 px-2 py-2">
           <div className="px-2 flex justify-between">
             <h2 className="text-xl">

@@ -11,7 +11,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import useScreen from "../Hooks/useScreen.js";
 import useOnline from "../Hooks/useOnline.js";
-import useRealTimeMsg from "../Hooks/useRealTimeMsg.js";
+import useGroupRealTimeMsg from "../Hooks/useGroupRealTimeMsg.js";
 import { useSelectedChat } from "../context/SelectedChat.jsx";
 import { useSocketContext } from "../context/SocketContext.jsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -23,11 +23,9 @@ const GroupChat = () => {
   const isOnline = useOnline();
   const lastMessage = useRef();
   const screenWidth = useScreen();
-  const [user, setUser] = useState({});
   const [input, setInput] = useState("");
   const [members, setMembers] = useState([]);
   const [messages, setMessages] = useState([]);
-  const { selectedGroupId } = useSelectedChat();
   const [errorMsg, setErrorMsg] = useState(null);
   const [groupData, setGroupData] = useState(null);
   const { socket, onlineUsers } = useSocketContext();
@@ -35,18 +33,20 @@ const GroupChat = () => {
   const [menuOptions, setMenuOptions] = useState(false);
   const [userIsTyping, setUserIsTyping] = useState(false);
   const [realTimeMessages, setRealTimeMessages] = useState([]);
+  const { selectedGroupId, setAddFrndToGrp } = useSelectedChat();
   const { user: loggedInUser, setUser: setLoggedInUser } = useLoggedInUser();
 
   const handleGroupChats = async () => {
     const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/group/${selectedGroupId}`, { credentials: "include" });
     const data = await res.json();
-    console.log("const messages = ", data);
     setGroupData(data);
     const groupedMessages = groupMessagesByDate(data.messages);
     setMessages(groupedMessages);
     setRealTimeMessages(null);
     data?.participants?.forEach((mem) => { membersMap[mem._id] = mem.fullname });
     setMembers(membersMap)
+    const filteredGroupMembers = data.participants.map(item => item?._id)
+    sessionStorage.setItem("group-members",filteredGroupMembers);
   };
 
   const todayDate = getTodayDate();
@@ -80,7 +80,7 @@ const GroupChat = () => {
     return groupedMessages;
   }
 
-  useRealTimeMsg(realTimeMessages, setRealTimeMessages);
+  useGroupRealTimeMsg(realTimeMessages, setRealTimeMessages);
 
   // const getGroupDetails = async () => {
   //   const reqData = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/messages/group/${selectedGroupId}`, { credentials: "include" });
@@ -202,8 +202,7 @@ const GroupChat = () => {
               <span className={`relative cursor-pointer dark:text-[#6c44fa] dark:hover:text-gray-800 ${!menuOptions && "hover:text-[#6c44fa]"}`} >
                 <FontAwesomeIcon icon={faEllipsisV} onClick={() => setMenuOptions((prev) => !prev)} />
                 {menuOptions && <span className="border dark:border-[#2D3250] px-2 py-2 w-52 dark:text-white hover:text-gray-800 dark:hover:text-white absolute bg-[#F1F1F1] dark:bg-[#2D3250] right-full top-full rounded shadow-xl">
-                  {loggedInUser.friends.some((frnd) => frnd.friendId == user._id && frnd.blockByUser == true) ? <p key="headerBtn1" onClick={handleUnBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Unblock</p> :
-                    <p key="headerBtn1" onClick={handleBlockUser} className="mb-1 py-1 dark:hover:text-[#6c44fa]">Block</p>}
+                  {groupData?.groupAdmins?.find((admin) => admin._id == loggedInUser._id) && <p onClick={() => { setAddFrndToGrp(true) }} key="headerBtn1" className="mb-1 py-1 dark:hover:text-[#6c44fa]">Add friends</p>}
                   <p key="headerBtn2" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Theme</s></p>
                   <p key="headerBtn3" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Clear All</s></p>
                   <p key="headerBtn4" className="mb-1 py-1 dark:hover:text-[#6c44fa]"><s>Unfollow</s></p>

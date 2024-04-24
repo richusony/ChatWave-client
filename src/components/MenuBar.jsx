@@ -6,12 +6,14 @@ import { useMenuContext } from '../context/MenuContext';
 import { useSelectedChat } from '../context/SelectedChat';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear, faMessage, faPlusCircle, faPowerOff, faUsers } from '@fortawesome/free-solid-svg-icons'
+import useScreen from '../Hooks/useScreen';
 
 const MenuBar = () => {
     const { logOut } = UserAuth();
     const navigate = useNavigate();
-    const { setMenuBar, groupsPage, setGroupsPage } = useMenuContext();
+    const screenWidth = useScreen();
     const { setNewGroupPage } = useSelectedChat();
+    const { setMenuBar, groupsPage, setGroupsPage } = useMenuContext();
 
     const handleLogOut = async (e) => {
         try {
@@ -26,7 +28,7 @@ const MenuBar = () => {
     };
 
     return (
-        <div className={`${groupsPage?"hidden":""} transition delay-150 ease-linear w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-4 px-3 overflow-hidden`}>
+        <div className={`${screenWidth < 768 ? groupsPage?"hidden":"" : ""} transition delay-150 ease-linear w-full md:w-1/3 h-screen bg-[#FFFFFF] dark:bg-[#424769]  py-4 px-3 overflow-hidden`}>
             <h1 className='mb-5 text-start'><FontAwesomeIcon className="text-2xl text-gray-600 hover:text-[#6c44fa] dark:text-gray-800 dark:hover:text-[#6c44fa] cursor-pointer" onClick={() => setMenuBar(false)} icon={faArrowLeft} /></h1>
             <div className='py-4 bg-[#E8E8F9] flex justify-center items-center rounded-xl shadow-xl'>
                 <h1 className='text-2xl font-bold'>Chat<span className='text-[#6c44fa]'>Wave</span></h1>

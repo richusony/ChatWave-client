@@ -14,12 +14,13 @@ import { useSelectedChat } from "../context/SelectedChat.jsx";
 import { AuthContextProvider } from "../context/AuthContext.jsx";
 import { SocketContextProvider } from "../context/SocketContext.jsx";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider.jsx";
+import AddFrndToGroup from "./AddFrndToGroup.jsx";
 
 const Chats = () => {
   const screenWidth = useScreen();
   const { user } = useLoggedInUser();
   const { menuBar, groupsPage } = useMenuContext();
-  const { openWindow, selectedId, notificationPage, newGroupPage, groupChatPage, selectedGroupId } = useSelectedChat();
+  const { openWindow, selectedId, notificationPage, newGroupPage, groupChatPage, selectedGroupId, addFrndToGrp } = useSelectedChat();
 
   if (!user) {
     return <Navigate to="/" />;
@@ -44,7 +45,7 @@ const Chats = () => {
           <ChatSec />
         </div>
       )}
-      {selectedGroupId && <div className={`w-full md:w-2/3 h-full bg-[#E8E8F9]`}><GroupChat /></div>}
+      {selectedGroupId && <div className={`w-full md:w-2/3 h-full bg-[#E8E8F9]`}>{addFrndToGrp && <AddFrndToGroup />}<GroupChat /></div>}
     </>
   );
 
@@ -53,6 +54,7 @@ const Chats = () => {
       {openWindow && <FindUserPage />}
       {notificationPage && <NotificationPage />}
       {newGroupPage && <NewGroup />}
+      {addFrndToGrp && <AddFrndToGroup />}
       {menuBar ? (groupsPage ? <GroupList /> : <MenuBar />) : <UsersList />}
       <div className={`hidden md:block w-full md:w-2/3 h-full bg-[#E8E8F9]`}>
         {selectedId ? <ChatSec /> : selectedGroupId ? <GroupChat /> : <InitialPage />}
