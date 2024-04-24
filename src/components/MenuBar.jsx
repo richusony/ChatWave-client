@@ -35,7 +35,7 @@ const MenuBar = () => {
             </div>
 
             <div className='mt-8'>
-                <div onClick={()=> {setNewGroupPage(false); navigate("/");}} className='mb-3 px-2 py-2 rounded border-l-4 border-transparent hover:border-[#6c44fa] hover:text-[#6c44fa] cursor-pointer'>
+                <div onClick={()=> {setNewGroupPage(false); screenWidth < 768 ? setMenuBar(false) : null; navigate("/");}} className='mb-3 px-2 py-2 rounded border-l-4 border-transparent hover:border-[#6c44fa] hover:text-[#6c44fa] cursor-pointer'>
                     <span className='flex items-center'><FontAwesomeIcon icon={faMessage} /> <h1 className='ml-3 text-lg font-semibold'>Chats</h1></span>
                 </div>
                 <div onClick={()=> setNewGroupPage(true)} className='mb-3 px-2 py-2 rounded border-l-4 border-transparent hover:border-[#6c44fa] hover:text-[#6c44fa] cursor-pointer'>

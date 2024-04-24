@@ -91,7 +91,7 @@ const NewGroup = () => {
     };
 
     return (
-        <div className='px-3 py-3 absolute translate-x-[50%] translate-y-[50%] h-96 w-full md:w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
+        <div className='px-3 py-3 absolute md:translate-x-[50%] translate-y-[50%] h-96 w-full md:w-1/2 bg-[#E1DFEA] z-50 rounded-xl shadow-2xl overflow-hidden'>
             <div className='flex justify-end text-xl'><FontAwesomeIcon className='hover:text-[#6c44fa] cursor-pointer' onClick={() => setNewGroupPage(false)} icon={faClose} /></div>
             <h1 className='mt-1 font-semibold text-center'>New Group</h1>
             <div className='text-end'>
