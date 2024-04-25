@@ -8,7 +8,7 @@ export async function loginSignUp(
   loginBtn
 ) {
   loginBtn.current.disabled = true;
-  loginBtn.current.innerText = "Loggin in...";
+  loginBtn.current.innerText = "Logging in...";
   // console.log("reached", email, fullname, profile_img);
   const reqData = {
     email,
