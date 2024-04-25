@@ -29,7 +29,6 @@ const AddFrndToGroup = () => {
         const res = await fetch(`${import.meta.env.VITE_BACKEND_DOMAIN}/api/users/get/friends-list-group`, { credentials: "include" });
         const resData = await res.json();
         setFriendsList(resData);
-        console.log(resData);
     };
 
     const handleAddRemoveUsers = (userId) => {

@@ -18,9 +18,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const UsersList = () => {
   const screenWidth = useScreen();
-  const { menuBar, setMenuBar } = useMenuContext()
   const [userData, setUserData] = useState([]);
   const [searchUser, setSearchUser] = useState("");
+  const { menuBar, setMenuBar } = useMenuContext();
   const [filteredUser, setFilteredUser] = useState([]);
   const [themeMode, setThemeMode] = useState(localStorage.getItem("theme"));
   const { selectedId, setSelectedId, selectedGroupId, setOpenWindow, notificationPage, setNotificationPage } = useSelectedChat();
