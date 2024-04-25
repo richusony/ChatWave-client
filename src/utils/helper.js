@@ -1,6 +1,14 @@
 import axios from "axios";
 
-export async function loginSignUp(email, fullname, profile_img, setUser) {
+export async function loginSignUp(
+  email,
+  fullname,
+  profile_img,
+  setUser,
+  loginBtn
+) {
+  loginBtn.current.disabled = true;
+  loginBtn.current.innerText = "Loggin in...";
   // console.log("reached", email, fullname, profile_img);
   const reqData = {
     email,
@@ -21,10 +29,14 @@ export async function loginSignUp(email, fullname, profile_img, setUser) {
   );
 
   if (res.status == 201 || res.status == 200) {
+    loginBtn.current.innerText = "Try now";
+    loginBtn.current.disabled = false;
     const resData = await res.json();
     sessionStorage.setItem("login-user", JSON.stringify(resData));
     setUser(resData);
   } else {
+    loginBtn.current.innerText = "Try now";
+    loginBtn.current.disabled = false;
     alert(res.status, "error while logging");
   }
   // console.log("response from backend  ", resData);
