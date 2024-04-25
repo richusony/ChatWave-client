@@ -1,12 +1,12 @@
 import React from 'react';
 import axios from 'axios';
+import useScreen from '../Hooks/useScreen';
 import { useNavigate } from 'react-router-dom';
 import { UserAuth } from '../context/AuthContext';
 import { useMenuContext } from '../context/MenuContext';
 import { useSelectedChat } from '../context/SelectedChat';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faGear, faMessage, faPlusCircle, faPowerOff, faUsers } from '@fortawesome/free-solid-svg-icons'
-import useScreen from '../Hooks/useScreen';
 
 const MenuBar = () => {
     const { logOut } = UserAuth();

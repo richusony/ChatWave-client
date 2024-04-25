@@ -8,19 +8,19 @@ import GroupChat from "./GroupChat.jsx";
 import { Navigate } from "react-router-dom";
 import useScreen from "../Hooks/useScreen.js";
 import FindUserPage from "./FindUserPage.jsx";
+import AddFrndToGroup from "./AddFrndToGroup.jsx";
 import NotificationPage from "./NotificationPage.jsx";
 import { useMenuContext } from "../context/MenuContext.jsx";
 import { useSelectedChat } from "../context/SelectedChat.jsx";
 import { AuthContextProvider } from "../context/AuthContext.jsx";
 import { SocketContextProvider } from "../context/SocketContext.jsx";
 import { useLoggedInUser } from "../context/LoggedInUserCnxtProvider.jsx";
-import AddFrndToGroup from "./AddFrndToGroup.jsx";
 
 const Chats = () => {
   const screenWidth = useScreen();
   const { user } = useLoggedInUser();
   const { menuBar, groupsPage } = useMenuContext();
-  const { openWindow, selectedId, notificationPage, newGroupPage, groupChatPage, selectedGroupId, addFrndToGrp } = useSelectedChat();
+  const { openWindow, selectedId, notificationPage, newGroupPage, selectedGroupId, addFrndToGrp } = useSelectedChat();
 
   if (!user) {
     return <Navigate to="/" />;

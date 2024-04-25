@@ -1,5 +1,3 @@
-import wave from "../assets/others/ailogo-removebg-preview.png";
-
 const InitialPage = () => {
 
   return (
@@ -20,13 +18,6 @@ const InitialPage = () => {
             e
           </span>
         </h1>
-        <div className="w-20 h-14">
-          <img
-            className="w-full h-full object-cover hue-rotate-60"
-            src={wave}
-            alt="wave"
-          />
-        </div>
       </div>
 
       <p className="px-4 text-lg text-center italic text-gray-500">
