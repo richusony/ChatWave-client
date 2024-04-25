@@ -27,7 +27,7 @@ const LoginSignUp = () => {
 
   return (
     <div>
-      {!info && <div className="md:absolute z-10 md:top-0 px-2 py-2 font-semibold bg-violet-400 text-gray-200 text-sm md:text-base text-center">
+      {info && <div className="md:absolute z-10 md:top-0 px-2 py-2 font-semibold bg-violet-400 text-gray-200 text-sm md:text-base text-center">
         <p>
           <FontAwesomeIcon icon={faInfoCircle} /> The login process is currently experiencing delays
           due to resource limitations on the server. We are actively
@@ -36,7 +36,7 @@ const LoginSignUp = () => {
           and we apologize for any inconvenience caused.</p>
       </div>}
       {user && <Navigate to="/chats" />}
-      <div className="pt-10 md:pt-0 flex flex-col md:flex-row items-center">
+      <div className={`pt-10 ${info? "pb-5" : ""} md:pt-0 flex flex-col md:flex-row items-center`}>
         <div className="w-full md:w-1/2 md:h-screen relative">
           <img
             className="w-full h-full object-contain"
