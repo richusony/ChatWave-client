@@ -20,7 +20,7 @@ const GroupList = () => {
   const screenWidth = useScreen();
   const { setMenuBar, setGroupsPage } = useMenuContext()
   const [groupData, setGroupData] = useState([]);
-  const [searchUser, setSearchUser] = useState("");
+  const [searchGroup, setSearchGroup] = useState("");
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [themeMode, setThemeMode] = useState(localStorage.getItem("theme"));
   const { setSelectedId, selectedGroupId, setSelectedGroupId, setOpenWindow, notificationPage, setNotificationPage } = useSelectedChat();
@@ -30,25 +30,25 @@ const GroupList = () => {
   }, []);
 
   useEffect(() => {
-    handleSearchUsers();
-  }, [searchUser]);
+    handleSearchGroup();
+  }, [searchGroup]);
 
   useEffect(() => {
     document.querySelector("html").classList.remove("light", "dark");
     document.querySelector("html").classList.add(themeMode);
   }, [themeMode]);
 
-  const handleSearchUsers = useCallback(() => {
-    const searchTerm = searchUser.trim().toLowerCase(); // Trim and convert search input to lowercase
+  const handleSearchGroup = useCallback(() => {
+    const searchTerm = searchGroup.trim().toLowerCase(); // Trim and convert search input to lowercase
     if (searchTerm !== "") {
-      const newData = groupData.filter((user) =>
-        user.senderInfo.fullname.toLowerCase().includes(searchTerm)
+      const newData = groupData.filter((group) =>
+        group.groupName.toLowerCase().includes(searchTerm)
       );
       setFilteredGroups(newData);
     } else {
       setFilteredGroups(groupData); // Reset to original data when search input is empty
     }
-  }, [searchUser]);
+  }, [searchGroup]);
 
   const darkTheme = () => {
     setThemeMode("dark");
@@ -109,10 +109,11 @@ const GroupList = () => {
               className="px-2 py-1 outline-none w-full bg-transparent dark:text-gray-300"
               placeholder="Search"
               type="text"
-              onChange={(e) => setSearchUser(e.target.value)}
+              value={searchGroup}
+              onChange={(e) => setSearchGroup(e.target.value)}
             />
             <FontAwesomeIcon
-              onClick={handleSearchUsers}
+              onClick={handleSearchGroup}
               className="transition delay-150 ease-linear text-gray-500 cursor-pointer hover:text-[#6c44fa]"
               icon={faSearch}
             />
@@ -156,6 +157,7 @@ const GroupList = () => {
               </div>
             </Link>
           ))}
+          {filteredGroups.length < 1 && <div className="mt-8 text-center"><span className="text-gray-500 text-xl">No groups yet!!</span> </div>}
         </div>
       </div>
     </ThemeProvdier>

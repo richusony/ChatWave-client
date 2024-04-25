@@ -155,6 +155,7 @@ const UsersList = () => {
               </div>
             </Link>
           ))}
+          {filteredUser.length < 1 && <div className="mt-8 text-center"><span className="text-gray-500 text-xl">Find new friends!!</span></div>}
         </div>
       </div>
     </ThemeProvdier>
