@@ -27,7 +27,7 @@ const LoginSignUp = () => {
 
   return (
     <div>
-      {info && <div className="absolute top-0 px-2 py-2 font-semibold bg-violet-400 text-gray-200 text-base text-center">
+      {!info && <div className="md:absolute z-10 md:top-0 px-2 py-2 font-semibold bg-violet-400 text-gray-200 text-sm md:text-base text-center">
         <p>
           <FontAwesomeIcon icon={faInfoCircle} /> The login process is currently experiencing delays
           due to resource limitations on the server. We are actively
